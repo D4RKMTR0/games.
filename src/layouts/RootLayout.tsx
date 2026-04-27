@@ -1,5 +1,4 @@
-import { Outlet, useLocation } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { Outlet } from "react-router";
 import Nav from "../components/NavBar";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";

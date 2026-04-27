@@ -4,8 +4,6 @@ import { games } from "../data/games"
 import { motion } from "framer-motion"
 import TicTacToePreview from "../components/previews/TicTacToePreview"
 import { Link } from "react-router"
-import Nav from "../components/NavBar"
-import Footer from "../components/Footer"
 
 const isTouchDevice = window.matchMedia("(hover: none)").matches
 

@@ -1,7 +1,5 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
-import Nav from "../components/NavBar"
-import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import SearchBar from "../components/SearchBar"
 import { games } from "../data/games"
@@ -13,7 +11,6 @@ function Library() {
     const indevGames = games.filter(g => g.status === 'in-development')
     const allGames = [...finishedGames, ...indevGames]
     
-    const filters = ["ALL", "LIVE", "IN DEVELOPMENT"]
     const [currentFilter, setCurrentFilter] = useState("ALL")
 
     const [query, setQuery] = useState("")

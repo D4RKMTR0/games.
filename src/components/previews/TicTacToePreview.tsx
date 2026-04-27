@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { X, Circle } from "lucide-react";
 
 const MOVES = [4, 1, 0, 8, 3, 6, 5];
-const WIN_STEP = 7;
 
 interface TicTacToePreviewProps {
     isHovered: boolean;
@@ -46,7 +45,6 @@ function TicTacToePreview({ isHovered, className = "" }: TicTacToePreviewProps) 
 
     return (
         <div className={`relative ${className}`}>
-            {/* GRID */}
             <div className="grid grid-cols-3 grid-rows-3 w-full h-full border border-(--border)">
                 {board.map((cell, i) => (
                     <div

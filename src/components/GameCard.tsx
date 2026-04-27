@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { PREVIEW_COMPONENTS } from './previews/previewregistry';
 import { games } from '../data/games';
 import { MoveUpRight } from 'lucide-react';
