@@ -10,7 +10,7 @@ interface TicTacToePreviewProps {
 
 function TicTacToePreview({ isHovered, className = "" }: TicTacToePreviewProps) {
     const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
-    const [step, setStep] = useState(0);
+    const [, setStep] = useState(0);
     const [showWin, setShowWin] = useState(false);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
