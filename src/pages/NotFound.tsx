@@ -28,7 +28,7 @@ function NotFound() {
                     {[
                         ["01", "Library", "/library", "all games"],
                         ["02", "About", "/about", "about this site"],
-                        ["03", "Now", "/now", "what's next"],
+                        ["03", "Log", "/log", "what's changed"],
                     ].map(([num, label, href, description]) => (
                         <Link key={num} to={href} className="flex items-center justify-between py-5 group transition-colors duration-200">
                             <div className="flex items-center gap-4">

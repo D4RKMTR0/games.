@@ -28,8 +28,8 @@ function Nav() {
                     <Link to="/about" className="transition-colors duration-200 hover:text-(--text)">
                         About
                     </Link>
-                    <Link to="/now" className="transition-colors duration-200 hover:text-(--text)">
-                        Now
+                    <Link to="/log" className="transition-colors duration-200 hover:text-(--text)">
+                        Log
                     </Link>
                 </nav>
             </header>
@@ -45,7 +45,7 @@ function Nav() {
                     {[
                         ["01", "Library", "/library", "/ all games"],
                         ["02", "About", "/about", "/ about this site"],
-                        ["03", "Now", "/now", "/ what's next"],
+                        ["03", "Log", "/log", "/ what changed"],
                     ].map(([num, label, href, description]) => (
                         <Link key={num} to={href} onClick={() => {setMenuIsOn(false)}} className="flex items-center justify-between py-7 border-b border-(--border) group transition-colors duration-200">
                             <div className="flex items-center gap-4">
