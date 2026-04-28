@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+@import "tailwindcss";
+@theme {
+    --animate-ttt-pop: ttt-pop 0.2s ease forwards;
+    --animate-ttt-line: ttt-line 0.3s ease forwards;
+}
+
+:root {
+
+  /* -- Colors -- */
+  /* Neutral  */
+  --bg:           oklch(14% 0 0);
+  --bg-subtle:    oklch(17% 0 0);
+  --border:       oklch(22% 0 0);
+  --border-mid:   oklch(28% 0 0);
+  
+  /* Text */
+  --text:    oklch(92% 0.01 90);
+  --text-muted:   oklch(55% 0 0);
+  --text-dim:     oklch(35% 0 0);
+
+  /* GREEN */
+  --green-muted:  oklch(25% 0.05 150);
+  --green-base:   oklch(65% 0.15 150);
+  --green-hover:  oklch(75% 0.20 150);
+
+  /* RED */
+  --red-muted:    oklch(25% 0.05 25);
+  --red-base:     oklch(65% 0.15 25);
+  --red-hover:    oklch(75% 0.20 25);
+
+  /* AMBER */
+  --amber-muted:  oklch(25% 0.05 75);
+  --amber-base:   oklch(65% 0.15 75);
+  --amber-hover:  oklch(75% 0.20 75);
+
+  /* CYAN */
+  --cyan-muted:   oklch(25% 0.05 200);
+  --cyan-base:    oklch(65% 0.15 200);
+  --cyan-hover:   oklch(75% 0.20 200);
+
+  /* BLUE */
+  --blue-muted:   oklch(25% 0.05 260);
+  --blue-base:    oklch(65% 0.15 260);
+  --blue-hover:   oklch(75% 0.20 260);
+
+  /* PURPLE */
+  --purple-muted: oklch(25% 0.05 300);
+  --purple-base:  oklch(65% 0.15 300);
+  --purple-hover: oklch(75% 0.20 300);
+
+  /* -- Fonts -- */
+  /* Geist*/
+  --font-sans: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Geist Mono */
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-family: var(--font-sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes ttt-pop {
+    from { opacity: 0; transform: scale(0.4); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ttt-line {
+    from { stroke-dasharray: 3; stroke-dashoffset: 3; }
+    to   { stroke-dasharray: 3; stroke-dashoffset: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@utility animate-spin-slow {
+  animation: spin 3s linear infinite;
+}

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",    // 1. Crucial for .ts imports
+    "allowImportingTsExtensions": true, // 2. Turns off the error you saw
+    "noEmit": true,                    // 3. Required when using flag #2
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": ["**/*.ts"]
+}
