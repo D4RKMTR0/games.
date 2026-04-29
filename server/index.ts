@@ -1,6 +1,6 @@
 import express from 'express';
 import { toNodeHandler } from "better-auth/node";
-import { auth } from "./auth.ts";
+import { auth } from "./auth.js";
 import dotenv from 'dotenv';
 import cors from 'cors';
 import statsRouter from "./routes/stats.ts";
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
     res.send(`
         <html>
             <head>
-                <title>Games API</title>
+                <title>Games. API</title>
                 <meta http-equiv="refresh" content="3;url=https://games-d4rk.vercel.app" />
                 <style>
                     body { 
