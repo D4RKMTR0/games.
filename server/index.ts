@@ -17,7 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/auth/*path", toNodeHandler(auth));
 app.use("/api/stats", statsRouter);
 
 app.get('/', (req, res) => {
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
         console.log(`-----------------------------------------`);
-        console.log(`🚀 BACKEND LIVE: http://localhost:${port}`);
+        console.log(`BACKEND IS LIVE: http://localhost:${port}`);
         console.log(`-----------------------------------------`);
     });
 }
