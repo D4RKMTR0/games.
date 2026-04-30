@@ -3,7 +3,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
 import dotenv from 'dotenv';
 import cors from 'cors';
-import statsRouter from "./routes/stats.ts";
+import statsRouter from "./routes/stats.js";
 
 dotenv.config();
 
