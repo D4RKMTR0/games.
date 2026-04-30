@@ -6,15 +6,19 @@ export const auth = betterAuth({
         connectionString: process.env.DATABASE_URL,
     }),
     
+    advanced: {
+        useSecureCookies: true,
+    },
+
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification: false 
+        requireEmailVerification: false
     },
 
     socialProviders: {
         google: {
-            clientId: process.env.GOOGLE_CLIENT_ID || "placeholder",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "placeholder",
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         },
     },
 
