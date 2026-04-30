@@ -27,5 +27,6 @@ export const auth = betterAuth({
         },
     },
 
+    baseURL: process.env.BETTER_AUTH_URL,
     trustedOrigins: ["http://localhost:5173", "https://games-d4rk.vercel.app"],
 });
