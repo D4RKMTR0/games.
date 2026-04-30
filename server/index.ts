@@ -21,32 +21,8 @@ app.all("/api/auth/*path", toNodeHandler(auth));
 app.use("/api/stats", statsRouter);
 
 app.get('/', (req, res) => {
-    res.send(`
-        <html>
-            <head>
-                <title>Games. API</title>
-                <meta http-equiv="refresh" content="3;url=https://games-d4rk.vercel.app" />
-                <style>
-                    body { 
-                        font-family: sans-serif; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
-                        height: 100vh; 
-                        background: #090909; 
-                        color: #fff; 
-                    }
-                </style>
-            </head>
-            <body>
-                <div>
-                    <h1>Games API is running...</h1>
-                    <p>Redirecting you to the portal in 3 seconds.</p>
-                </div>
-            </body>
-        </html>
-    `);
-});
+    res.redirect('https://games-d4rk.vercel.app')
+})
 
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
