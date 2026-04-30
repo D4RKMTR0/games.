@@ -8,6 +8,11 @@ export const auth = betterAuth({
     
     advanced: {
         useSecureCookies: true,
+        cookiePrefix: "better-auth",
+    },
+
+    verification: {
+        storeInDatabase: true,
     },
 
     emailAndPassword: {
