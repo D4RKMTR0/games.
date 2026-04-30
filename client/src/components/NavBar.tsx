@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router";
+import { authClient } from "../lib/auth-client"
 
 function Nav() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuIsOn, setMenuIsOn] = useState(false);
+
+    const { data: session } = authClient.useSession()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -21,7 +24,7 @@ function Nav() {
                     <span className="font-semibold">Games.</span>
                     <span className="text-(--text-muted)">/ by d4rk</span>
                 </Link>
-                <nav className="hidden sm:flex gap-6 text-[13px] pr-[clamp(30px,_4.5%,_100px)] text-(--text-muted) font-mono">
+                <nav className="hidden sm:flex items-center gap-6 text-[13px] pr-[clamp(30px,_4.5%,_100px)] text-(--text-muted) font-mono">
                     <Link to="/library" className="transition-colors duration-200 hover:text-(--text)">
                         Library
                     </Link>
@@ -31,6 +34,26 @@ function Nav() {
                     <Link to="/log" className="transition-colors duration-200 hover:text-(--text)">
                         Log
                     </Link>
+                    {session ? (
+                        <div className="flex items-center gap-3 ml-2 pl-6 border-l border-(--border)">
+                            <span className="font-mono text-xs text-(--text-dim)">{session.user.name[0]}</span>
+                            <button
+                                onClick={() => authClient.signOut()}
+                                className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors duration-200"
+                            >
+                                Sign out
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-6 ml-2 pl-6 border-l border-(--border)">
+                            <Link to="/auth/login" className="transition-colors duration-200 hover:text-(--text)">
+                                Log in
+                            </Link>
+                            <Link to="/auth/signup" className="transition-colors duration-200 bg-(--text) text-(--bg) px-3 py-1.5 hover:opacity-80">
+                                Sign up
+                            </Link>
+                        </div>
+                    )}
                 </nav>
             </header>
 
@@ -64,6 +87,26 @@ function Nav() {
                             <ChevronRight strokeWidth={1} size={30} className="text-(--text-muted) group-hover:text-(--text) group-hover:translate-x-2 transition-all duration-200"/>
                         </Link>
                     ))}
+                    {session ? (
+                        <div className="flex items-center justify-between pt-8 border-t border-(--border)">
+                            <span className="font-mono text-xs text-(--text-dim)">{session.user.name}</span>
+                            <button
+                                onClick={() => { authClient.signOut(); setMenuIsOn(false) }}
+                                className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors duration-200"
+                            >
+                                Sign out
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex gap-4 pt-8">
+                            <Link to="/auth/login" onClick={() => setMenuIsOn(false)} className="flex-1 flex justify-center items-center py-3 font-mono text-sm text-(--text-muted) border border-(--border) hover:text-(--text) hover:border-(--text-dim) transition-colors duration-200">
+                                Log in
+                            </Link>
+                            <Link to="/auth/signup" onClick={() => setMenuIsOn(false)} className="flex-1 flex justify-center items-center py-3 font-mono text-sm bg-(--text) text-(--bg) hover:opacity-80 transition-opacity duration-200">
+                                Sign up
+                            </Link>
+                        </div>
+                    )}
                 </nav>
             </div>
         </>

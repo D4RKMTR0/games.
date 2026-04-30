@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Library from './pages/Library';
 import NotFound from './pages/NotFound';
 import About from './pages/About';
+import Log from './pages/Log';
+import Auth from './pages/Auth';
 
 const router = createBrowserRouter([
   {
@@ -23,9 +25,21 @@ const router = createBrowserRouter([
         element: <About />
       },
       {
+        path: "log",
+        element: <Log />
+      },
+      {
         path: "game/:id",
         element: <div className="p-10 font-mono text-xs">BOOTING_MODULE...</div>,
       },
+      {
+        path: "auth/signup",
+        element: <Auth />
+      },
+      {
+        path: "auth/login",
+        element: <Auth />
+      }
     ],
   },
   {

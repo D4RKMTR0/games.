@@ -1,9 +1,13 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Nav from "../components/NavBar";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 
+const noFooterRoutes = ["/auth/login", "/auth/signup"]
+
 function RootLayout() {
+    const location = useLocation()
+    const showFooter = !noFooterRoutes.includes(location.pathname)
 
     return (
         <>
@@ -13,10 +17,10 @@ function RootLayout() {
                 <main className="flex-grow">
                     <Outlet />
                 </main>
-                <Footer />
+                {showFooter && <Footer />}
             </div>
         </>
     );
 }
 
-export default RootLayout;
+export default RootLayout
