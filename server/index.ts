@@ -26,9 +26,7 @@ app.get('/', (req, res) => {
 
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
-        console.log(`-----------------------------------------`);
         console.log(`BACKEND IS LIVE: http://localhost:${port}`);
-        console.log(`-----------------------------------------`);
     });
 }
 

@@ -35,7 +35,7 @@ function Nav() {
                         Log
                     </Link>
                     {session?.user ? (
-                        <div className="flex items-center gap-3 ml-2 pl-6 border-l border-(--border)">
+                        <div className="flex items-center gap-4 ml-2 pl-6 border-l border-(--border)">
                             <span className="font-mono text-xs text-(--text-dim)">{session?.user?.name || "?user"}</span>
                             <button
                                 onClick={() => authClient.signOut()}

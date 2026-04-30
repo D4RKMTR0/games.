@@ -24,11 +24,16 @@ function Auth() {
         setError(null)
         setLoading(true)
         try {
-            if (mode === "signup") {
-                await authClient.signUp.email({ name, email, password })
-            } else {
-                await authClient.signIn.email({ email, password })
+            const result = mode === "signup"
+                ? await authClient.signUp.email({ name, email, password })
+                : await authClient.signIn.email({ email, password })
+
+            if (result.error) {
+                setError(result.error.message ?? "Something went wrong")
+                return
             }
+
+            navigate("/")
         } catch (e: any) {
             setError(e.message ?? "Something went wrong")
         } finally {
