@@ -34,9 +34,9 @@ function Nav() {
                     <Link to="/log" className="transition-colors duration-200 hover:text-(--text)">
                         Log
                     </Link>
-                    {session ? (
+                    {session?.user ? (
                         <div className="flex items-center gap-3 ml-2 pl-6 border-l border-(--border)">
-                            <span className="font-mono text-xs text-(--text-dim)">{session.user.name[0]}</span>
+                            <span className="font-mono text-xs text-(--text-dim)">{session?.user?.name || "?user"}</span>
                             <button
                                 onClick={() => authClient.signOut()}
                                 className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors duration-200"
@@ -87,9 +87,9 @@ function Nav() {
                             <ChevronRight strokeWidth={1} size={30} className="text-(--text-muted) group-hover:text-(--text) group-hover:translate-x-2 transition-all duration-200"/>
                         </Link>
                     ))}
-                    {session ? (
+                    {session?.user ? (
                         <div className="flex items-center justify-between pt-8 border-t border-(--border)">
-                            <span className="font-mono text-xs text-(--text-dim)">{session.user.name}</span>
+                            <span className="font-mono text-xs text-(--text-dim)">{session?.user?.name || "?user"}</span>
                             <button
                                 onClick={() => { authClient.signOut(); setMenuIsOn(false) }}
                                 className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors duration-200"
