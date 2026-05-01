@@ -28,7 +28,7 @@ function Settings() {
     const [resetLoading, setResetLoading] = useState(false);
     const [showResetAvatarConfirm, setShowResetAvatarConfirm] = useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-    const [success, setSuccess] = useState(false)
+    const [success, setSuccess] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [stats, setStats] = useState<Stats[]>([])
     const [statsLoading, setStatsLoading] = useState(false)
@@ -60,11 +60,11 @@ function Settings() {
     const handleSave = async () => {
         setLoading(true)
         setError(null)
-        setSuccess(false)
+        setSuccess(null)
         try {
             await api.patch("/api/user/update", { name, username, theme })
             await refetch()
-            setSuccess(true)
+            setSuccess('true')
         } catch (e: any) {
             setError("Failed to save changes")
         } finally {
@@ -121,7 +121,8 @@ function Settings() {
         try {
             await api.patch("/api/user/reset-avatar", { });
             
-            alert("Profile picture reset successfully!");
+            setSuccess('Successfully reset avatar.')
+            setShowResetAvatarConfirm(false)
         } catch (e: any) {
             setError("Failed to reset profile picture");
         } finally {
