@@ -76,7 +76,8 @@ function Settings() {
         try {
             await api.patch("/api/user/update", { name, username, theme })
             await refetch()
-            setSuccess('true')
+
+            setSuccess('Saved.')
         } catch (e: any) {
             setError("Failed to save changes")
         } finally {
