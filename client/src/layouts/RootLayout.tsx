@@ -3,7 +3,7 @@ import Nav from "../components/NavBar";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 
-const noFooterRoutes = ["/auth/login", "/auth/signup"]
+const noFooterRoutes = ["/auth/login", "/auth/signup", "/user/settings"]
 
 function RootLayout() {
     const location = useLocation()

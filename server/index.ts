@@ -4,6 +4,7 @@ import { auth } from "./auth.js";
 import dotenv from 'dotenv';
 import cors from 'cors';
 import statsRouter from "./routes/stats.js";
+import userRouter from "./routes/user.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.all("/api/auth/*path", toNodeHandler(auth));
 app.use("/api/stats", statsRouter);
+app.use("/api/user", userRouter);
 
 app.get('/', (req, res) => {
     res.redirect('https://games-d4rk.vercel.app')

@@ -13,6 +13,7 @@ export const auth = betterAuth({
         },
         defaultCookieAttributes: {
             sameSite: "none",
+            sameSiteStrict: false,
             secure: true,
         },
     },
@@ -30,6 +31,21 @@ export const auth = betterAuth({
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        },
+    },
+
+    databaseHooks: {
+        user: {
+            create: {
+                before: async (user, ctx) => {
+                    return {
+                        data: {
+                            ...user,
+                            image: null,
+                        },
+                    };
+                },
+            },
         },
     },
 

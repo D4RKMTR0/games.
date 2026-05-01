@@ -6,6 +6,7 @@ import NotFound from './pages/NotFound';
 import About from './pages/About';
 import Log from './pages/Log';
 import Auth from './pages/Auth';
+import Settings from './pages/Settings';
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,11 @@ const router = createBrowserRouter([
       {
         path: "auth/login",
         element: <Auth />
-      }
+      },
+      {
+        path: "user/settings",
+        element: <Settings />
+      },
     ],
   },
   {

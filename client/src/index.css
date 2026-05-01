@@ -5,7 +5,7 @@
     --animate-ttt-line: ttt-line 0.3s ease forwards;
 }
 
-:root {
+:root, .dark {
 
   /* -- Colors -- */
   /* Neutral  */
@@ -66,6 +66,49 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.light {
+  --bg: oklch(96% 0 0);
+  --bg-subtle: oklch(92% 0 0);
+  --border: oklch(85% 0 0);
+  --border-mid: oklch(75% 0 0);
+  
+  --text: oklch(14% 0 0);
+  --text-muted: oklch(50% 0 0);
+  --text-dim: oklch(65% 0 0);
+
+  /* GREEN */
+  --green-muted:  oklch(88% 0.05 150);
+  --green-base:   oklch(45% 0.15 150);
+  --green-hover:  oklch(35% 0.20 150);
+
+  /* RED */
+  --red-muted:    oklch(88% 0.05 25);
+  --red-base:     oklch(45% 0.15 25);
+  --red-hover:    oklch(35% 0.20 25);
+
+  /* AMBER */
+  --amber-muted:  oklch(88% 0.05 75);
+  --amber-base:   oklch(45% 0.15 75);
+  --amber-hover:  oklch(35% 0.20 75);
+
+  /* CYAN */
+  --cyan-muted:   oklch(88% 0.05 200);
+  --cyan-base:    oklch(45% 0.15 200);
+  --cyan-hover:   oklch(35% 0.20 200);
+
+  /* BLUE */
+  --blue-muted:   oklch(88% 0.05 260);
+  --blue-base:    oklch(45% 0.15 260);
+  --blue-hover:   oklch(35% 0.20 260);
+
+  /* PURPLE */
+  --purple-muted: oklch(88% 0.05 300);
+  --purple-base:  oklch(45% 0.15 300);
+  --purple-hover: oklch(35% 0.20 300);
+
+  color-scheme: light;
 }
 
 @keyframes ttt-pop {
