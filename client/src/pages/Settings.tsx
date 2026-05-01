@@ -20,6 +20,7 @@ function Settings() {
 
     const [section, setSection] = useState<Section>("account")
     const [name, setName] = useState("")
+    const [username, setUsername] = useState("")
     const [theme, setTheme] = useState<"dark" | "light">("dark")
     const [loading, setLoading] = useState(false)
     const [avatarLoading, setAvatarLoading] = useState(false)
@@ -34,6 +35,7 @@ function Settings() {
     useEffect(() => {
         if (user) {
             setName(user.name ?? "")
+            setUsername(user.username ?? "")
             setTheme(user.theme ?? "dark")
         }
     }, [user])
@@ -58,7 +60,7 @@ function Settings() {
         setError(null)
         setSuccess(false)
         try {
-            await api.patch("/api/user/update", { name, theme })
+            await api.patch("/api/user/update", { name, username, theme })
             await refetch()
             setSuccess(true)
         } catch (e: any) {
@@ -133,7 +135,7 @@ function Settings() {
             transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
             className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
         >
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] w-full max-w-4xl min-h-[80dvh] border border-(--border) mt-10 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] w-full max-w-4xl h-[80dvh] border border-(--border) mt-10 mb-10">
 
                 {/* Sidebar */}
                 <div className="border-b md:border-b-0 md:border-r border-(--border) p-6 flex flex-col gap-1">
@@ -151,7 +153,7 @@ function Settings() {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 flex flex-col gap-8">
+                <div className="p-8 flex flex-col gap-8 overflow-y-auto">
 
                     {section === "account" && (
                         <>
@@ -160,6 +162,7 @@ function Settings() {
                                 <h2 className="font-bold text-xl text-(--text)">Your details</h2>
                             </div>
 
+                            {/* Avatar */}
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
@@ -182,11 +185,12 @@ function Settings() {
                                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-sm text-(--text)">{user?.name}</span>
-                                    <span className="font-mono text-xs text-(--text-dim)">{user?.email}</span>
+                                    <span className="font-mono text-xs text-(--text-dim)">@{user?.username}</span>
                                     <span className="font-mono text-[10px] text-(--text-dim) mt-1">Click avatar to change</span>
                                 </div>
                             </div>
 
+                            {/* Display name */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Display name</label>
                                 <input
@@ -197,6 +201,22 @@ function Settings() {
                                 />
                             </div>
 
+                            {/* Username */}
+                            <div className="flex flex-col gap-1.5">
+                                <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Username</label>
+                                <div className="flex items-center border border-(--border) max-w-sm focus-within:border-(--text-dim) transition-colors duration-200">
+                                    <span className="font-mono text-sm text-(--text-dim) pl-3">@</span>
+                                    <input
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+                                        className="bg-transparent px-2 py-2.5 text-sm text-(--text) outline-none w-full"
+                                    />
+                                </div>
+                                <span className="font-mono text-[10px] text-(--text-dim)">games-d4rk.vercel.app/user/{username || "username"}</span>
+                            </div>
+
+                            {/* Email */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Email</label>
                                 <input
@@ -319,7 +339,7 @@ function Settings() {
                     )}
 
                     {section !== "stats" && (
-                        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border)">
+                        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border) sticky bottom-0 bg-(--bg)">
                             <button
                                 onClick={handleSave}
                                 disabled={loading}

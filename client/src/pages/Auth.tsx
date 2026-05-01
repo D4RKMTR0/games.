@@ -35,7 +35,21 @@ function Auth() {
                 : await authClient.signIn.email({ email, password })
 
             if (result.error) {
-                setError(result.error.message ?? "Something went wrong")
+                const errMsg = result.error.message || ""
+
+                if (errMsg.includes("Invalid email address")) {
+                    setError("Please enter a valid email address.")
+                } else if (errMsg.includes("Password too short")) {
+                    setError("Password must be at least 8 characters.")
+                } else if (errMsg.includes("User already exists")) {
+                    setError("An account with this email already exists.")
+                } else if (errMsg.includes("Failed to create user")) {
+                    setError("Username is already taken.")
+                } else if (errMsg.includes("Invalid email or password")) {
+                    setError("Invalid email or password.")
+                } else {
+                    setError(errMsg || "Something went wrong.")
+                }
                 return
             }
 
