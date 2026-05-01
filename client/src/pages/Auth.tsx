@@ -9,6 +9,7 @@ function Auth() {
     const navigate = useNavigate()
 
     const [name, setName] = useState("")
+    const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState<string | null>(null)
@@ -25,7 +26,12 @@ function Auth() {
         setLoading(true)
         try {
             const result = mode === "signup"
-                ? await authClient.signUp.email({ name, email, password })
+                ? await authClient.signUp.email({ 
+                    name, 
+                    email, 
+                    password,
+                    username,
+                } as any)
                 : await authClient.signIn.email({ email, password })
 
             if (result.error) {
@@ -79,16 +85,29 @@ function Auth() {
 
                 <div className="flex flex-col gap-4">
                     {mode === "signup" && (
-                        <div className="flex flex-col gap-1.5">
-                            <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Name</label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="bg-transparent border border-(--border) px-3 py-2.5 text-sm text-(--text) outline-none focus:border-(--text-dim) transition-colors duration-200 w-full"
-                                placeholder="your name"
-                            />
-                        </div>
+                        <>
+                            <div className="flex flex-col gap-1.5">
+                                <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Display name</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="bg-transparent border border-(--border) px-3 py-2.5 text-sm text-(--text) outline-none focus:border-(--text-dim) transition-colors duration-200 w-full"
+                                    placeholder="your name"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                                <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Username</label>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+                                    className="bg-transparent border border-(--border) px-3 py-2.5 text-sm text-(--text) outline-none focus:border-(--text-dim) transition-colors duration-200 w-full"
+                                    placeholder="username"
+                                />
+                                <span className="font-mono text-[10px] text-(--text-dim)">No spaces, lowercase only</span>
+                            </div>
+                        </>
                     )}
                     <div className="flex flex-col gap-1.5">
                         <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Email</label>

@@ -38,11 +38,14 @@ export const auth = betterAuth({
         user: {
             create: {
                 before: async (user, ctx) => {
+                    const firstName = user.name?.split(" ")[0] ?? user.name
+                    const generatedUsername = user?.name?.toLowerCase().replace(/\s+/g, "") ?? "user"
                     return {
                         data: {
                             ...user,
-                            name: user.name?.split(" ")[0] ?? user.name,
-                            image: "https://o1n6wjzhyksrqjmz.public.blob.vercel-storage.com/profilepicture.png",
+                            name: firstName,
+                            username: (user as any).username ?? generatedUsername,
+                            image: null,
                         },
                     };
                 },
@@ -56,6 +59,10 @@ export const auth = betterAuth({
                 type: "string",
                 required: false,
                 defaultValue: "dark",
+            },
+            username: {
+                type: "string",
+                required: false,
             }
         }
     },
