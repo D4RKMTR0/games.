@@ -1,21 +1,34 @@
 import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
+import { useNavigate } from "react-router"
 import { authClient } from "../lib/auth-client"
 import { api } from "../lib/api"
 
-type Section = "account" | "preferences"
+type Section = "account" | "preferences" | "stats"
+
+interface Stats {
+    game_id: string
+    won: number
+    lost: number
+    drew: number
+}
 
 function Settings() {
     const { data: session, refetch } = authClient.useSession()
     const user = session?.user as any
+    const navigate = useNavigate()
 
     const [section, setSection] = useState<Section>("account")
     const [name, setName] = useState("")
     const [theme, setTheme] = useState<"dark" | "light">("dark")
     const [loading, setLoading] = useState(false)
     const [avatarLoading, setAvatarLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [stats, setStats] = useState<Stats[]>([])
+    const [statsLoading, setStatsLoading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -29,6 +42,16 @@ function Settings() {
         document.documentElement.classList.remove("light", "dark")
         document.documentElement.classList.add(theme)
     }, [theme])
+
+    useEffect(() => {
+        if (section === "stats") {
+            setStatsLoading(true)
+            api.get("/api/stats")
+                .then(data => setStats(data ?? []))
+                .catch(() => setStats([]))
+                .finally(() => setStatsLoading(false))
+        }
+    }, [section])
 
     const handleSave = async () => {
         setLoading(true)
@@ -62,7 +85,6 @@ function Settings() {
             })
 
             if (!res.ok) throw new Error("Upload failed")
-
             await refetch()
         } catch (e: any) {
             setError("Failed to upload avatar")
@@ -71,9 +93,36 @@ function Settings() {
         }
     }
 
+    const handleSignOut = async () => {
+        await authClient.signOut()
+        navigate("/")
+    }
+
+    const handleDeleteAccount = async () => {
+        setDeleteLoading(true)
+        try {
+            await api.delete("/api/user/delete")
+            await authClient.signOut()
+            navigate("/")
+        } catch (e: any) {
+            setError("Failed to delete account")
+        } finally {
+            setDeleteLoading(false)
+            setShowDeleteConfirm(false)
+        }
+    }
+
+    const totalGames = stats.reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
+    const totalWins = stats.reduce((acc, s) => acc + s.won, 0)
+    const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0
+    const favoriteGame = stats.length > 0
+        ? stats.reduce((a, b) => (a.won + a.lost + a.drew) > (b.won + b.lost + b.drew) ? a : b).game_id
+        : null
+
     const sections: { id: Section, label: string, description: string }[] = [
         { id: "account", label: "Account", description: "/ your details" },
         { id: "preferences", label: "Preferences", description: "/ display & behavior" },
+        { id: "stats", label: "Stats", description: "/ your performance" },
     ]
 
     return (
@@ -86,6 +135,7 @@ function Settings() {
         >
             <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] w-full max-w-4xl min-h-[80dvh] border border-(--border) mt-10 mb-10">
 
+                {/* Sidebar */}
                 <div className="border-b md:border-b-0 md:border-r border-(--border) p-6 flex flex-col gap-1">
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) mb-4">Settings</span>
                     {sections.map(s => (
@@ -100,6 +150,7 @@ function Settings() {
                     ))}
                 </div>
 
+                {/* Content */}
                 <div className="p-8 flex flex-col gap-8">
 
                     {section === "account" && (
@@ -128,13 +179,7 @@ function Settings() {
                                         </span>
                                     </div>
                                 </button>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleAvatarChange}
-                                />
+                                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-sm text-(--text)">{user?.name}</span>
                                     <span className="font-mono text-xs text-(--text-dim)">{user?.email}</span>
@@ -161,6 +206,48 @@ function Settings() {
                                     className="bg-transparent border border-(--border) px-3 py-2.5 text-sm text-(--text-dim) outline-none w-full max-w-sm cursor-not-allowed"
                                 />
                             </div>
+
+                            <button
+                                onClick={handleSignOut}
+                                className="w-fit font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200"
+                            >
+                                Sign out
+                            </button>
+
+                            {/* Danger zone */}
+                            <div className="flex flex-col gap-3 pt-4 border-t border-(--red-muted)">
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--red-base)">Danger zone</span>
+
+                                {!showDeleteConfirm ? (
+                                    <button
+                                        onClick={() => setShowDeleteConfirm(true)}
+                                        className="w-fit border border-(--red-base) text-(--red-base) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:bg-(--red-muted) transition-colors duration-200"
+                                    >
+                                        Delete account
+                                    </button>
+                                ) : (
+                                    <div className="flex flex-col gap-3 border border-(--red-base) p-4 max-w-sm">
+                                        <p className="font-mono text-xs text-(--text-dim) leading-relaxed">
+                                            This will permanently delete your account and all your data. This cannot be undone.
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handleDeleteAccount}
+                                                disabled={deleteLoading}
+                                                className="border border-(--red-base) text-(--red-base) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:bg-(--red-muted) transition-colors duration-200 disabled:opacity-40"
+                                            >
+                                                {deleteLoading ? "Deleting..." : "Confirm delete"}
+                                            </button>
+                                            <button
+                                                onClick={() => setShowDeleteConfirm(false)}
+                                                className="border border-(--border) text-(--text-muted) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:text-(--text) transition-colors duration-200"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </>
                     )}
 
@@ -171,7 +258,6 @@ function Settings() {
                                 <h2 className="font-bold text-xl text-(--text)">Display & behavior</h2>
                             </div>
 
-                            {/* Theme */}
                             <div className="flex flex-col gap-3">
                                 <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Theme</label>
                                 <div className="flex gap-3">
@@ -189,17 +275,62 @@ function Settings() {
                         </>
                     )}
 
-                    <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border)">
-                        <button
-                            onClick={handleSave}
-                            disabled={loading}
-                            className="bg-(--text) text-(--bg) px-6 py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40"
-                        >
-                            {loading ? "Saving..." : "Save changes"}
-                        </button>
-                        {success && <span className="font-mono text-xs text-(--green-base)">Saved.</span>}
-                        {error && <span className="font-mono text-xs text-(--red-base)">{error}</span>}
-                    </div>
+                    {section === "stats" && (
+                        <>
+                            <div className="flex flex-col gap-1">
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Stats</span>
+                                <h2 className="font-bold text-xl text-(--text)">Your performance</h2>
+                            </div>
+
+                            {statsLoading ? (
+                                <span className="font-mono text-xs text-(--text-dim)">Loading...</span>
+                            ) : stats.length === 0 ? (
+                                <span className="font-mono text-xs text-(--text-dim)">No games played yet.</span>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-3 border border-(--border)">
+                                        {[
+                                            ["Total games", totalGames.toString()],
+                                            ["Win rate", `${winRate}%`],
+                                            ["Favorite", favoriteGame ?? "—"],
+                                        ].map(([label, value]) => (
+                                            <div key={label} className="flex flex-col gap-1 p-4 border-r last:border-r-0 border-(--border)">
+                                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">{label}</span>
+                                                <span className="font-bold text-lg text-(--text)">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex flex-col border-t border-(--border)">
+                                        {stats.map(s => (
+                                            <div key={s.game_id} className="flex items-center justify-between py-4 border-b border-(--border)">
+                                                <span className="font-bold text-sm text-(--text) capitalize">{s.game_id}</span>
+                                                <div className="flex gap-6 font-mono text-xs text-(--text-dim)">
+                                                    <span><span className="text-(--green-base)">{s.won}</span> W</span>
+                                                    <span><span className="text-(--red-base)">{s.lost}</span> L</span>
+                                                    <span><span className="text-(--text-muted)">{s.drew}</span> D</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    )}
+
+                    {section !== "stats" && (
+                        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border)">
+                            <button
+                                onClick={handleSave}
+                                disabled={loading}
+                                className="bg-(--text) text-(--bg) px-6 py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40"
+                            >
+                                {loading ? "Saving..." : "Save changes"}
+                            </button>
+                            {success && <span className="font-mono text-xs text-(--green-base)">Saved.</span>}
+                            {error && <span className="font-mono text-xs text-(--red-base)">{error}</span>}
+                        </div>
+                    )}
 
                 </div>
             </div>

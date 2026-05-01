@@ -62,4 +62,10 @@ router.post("/avatar", requireAuth, upload.single("avatar"), async (req, res) =>
     res.json({ url: blob.url })
 })
 
+router.delete("/delete", requireAuth, async (req, res) => {
+    const userId = req.user!.id
+    await pool.query(`DELETE FROM "user" WHERE id = $1`, [userId])
+    res.json({ success: true })
+})
+
 export default router;

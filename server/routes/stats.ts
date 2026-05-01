@@ -39,4 +39,13 @@ router.post("/:gameId", requireAuth, async (req, res) => {
     res.json({ success: true });
 });
 
+router.get("/", requireAuth, async (req, res) => {
+    const userId = req.user!.id
+    const result = await pool.query(
+        `SELECT * FROM stats WHERE user_id = $1`,
+        [userId]
+    )
+    res.json(result.rows)
+})
+
 export default router;

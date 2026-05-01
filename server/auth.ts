@@ -41,7 +41,8 @@ export const auth = betterAuth({
                     return {
                         data: {
                             ...user,
-                            image: null,
+                            name: user.name?.split(" ")[0] ?? user.name,
+                            image: "https://o1n6wjzhyksrqjmz.public.blob.vercel-storage.com/profilepicture.png",
                         },
                     };
                 },
