@@ -11,7 +11,6 @@ function Nav() {
     const [dropDownIsOn, setDropDownIsOn] = useState(false);
 
     const { data: session } = authClient.useSession()
-    console.log(session?.user)
 
     const defaultAvatar = "https://o1n6wjzhyksrqjmz.public.blob.vercel-storage.com/profilepicture.png"
 

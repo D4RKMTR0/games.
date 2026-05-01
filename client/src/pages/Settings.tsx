@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { authClient } from "../lib/auth-client"
 import { api } from "../lib/api"
@@ -13,8 +13,10 @@ function Settings() {
     const [name, setName] = useState("")
     const [theme, setTheme] = useState<"dark" | "light">("dark")
     const [loading, setLoading] = useState(false)
+    const [avatarLoading, setAvatarLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (user) {
@@ -43,6 +45,32 @@ function Settings() {
         }
     }
 
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setAvatarLoading(true)
+        setError(null)
+        try {
+            const formData = new FormData()
+            formData.append("avatar", file)
+
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/avatar`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+            })
+
+            if (!res.ok) throw new Error("Upload failed")
+
+            await refetch()
+        } catch (e: any) {
+            setError("Failed to upload avatar")
+        } finally {
+            setAvatarLoading(false)
+        }
+    }
+
     const sections: { id: Section, label: string, description: string }[] = [
         { id: "account", label: "Account", description: "/ your details" },
         { id: "preferences", label: "Preferences", description: "/ display & behavior" },
@@ -58,7 +86,6 @@ function Settings() {
         >
             <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] w-full max-w-4xl min-h-[80dvh] border border-(--border) mt-10 mb-10">
 
-                {/* Sidebar */}
                 <div className="border-b md:border-b-0 md:border-r border-(--border) p-6 flex flex-col gap-1">
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) mb-4">Settings</span>
                     {sections.map(s => (
@@ -73,7 +100,6 @@ function Settings() {
                     ))}
                 </div>
 
-                {/* Content */}
                 <div className="p-8 flex flex-col gap-8">
 
                     {section === "account" && (
@@ -83,22 +109,39 @@ function Settings() {
                                 <h2 className="font-bold text-xl text-(--text)">Your details</h2>
                             </div>
 
-                            {/* Avatar */}
                             <div className="flex items-center gap-4">
-                                {user?.image ? (
-                                    <img src={user.image} alt="avatar" className="w-14 h-14 rounded-full border border-(--border)" />
-                                ) : (
-                                    <div className="w-14 h-14 border border-(--border) flex items-center justify-center font-bold text-xl text-(--text-muted)">
-                                        {user?.name?.[0]?.toUpperCase() ?? "?"}
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={avatarLoading}
+                                    className="relative group shrink-0"
+                                >
+                                    {user?.image ? (
+                                        <img src={user.image} alt="avatar" className="w-14 h-14 rounded-full border border-(--border) object-cover" />
+                                    ) : (
+                                        <div className="w-14 h-14 border border-(--border) flex items-center justify-center font-bold text-xl text-(--text-muted)">
+                                            {user?.name?.[0]?.toUpperCase() ?? "?"}
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 rounded-full bg-(--bg)/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <span className="font-mono text-[9px] tracking-widest uppercase text-(--text)">
+                                            {avatarLoading ? "..." : "Change"}
+                                        </span>
                                     </div>
-                                )}
+                                </button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleAvatarChange}
+                                />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-sm text-(--text)">{user?.name}</span>
                                     <span className="font-mono text-xs text-(--text-dim)">{user?.email}</span>
+                                    <span className="font-mono text-[10px] text-(--text-dim) mt-1">Click avatar to change</span>
                                 </div>
                             </div>
 
-                            {/* Name */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Display name</label>
                                 <input
@@ -109,7 +152,6 @@ function Settings() {
                                 />
                             </div>
 
-                            {/* Email — readonly */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Email</label>
                                 <input
@@ -147,7 +189,6 @@ function Settings() {
                         </>
                     )}
 
-                    {/* Save */}
                     <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border)">
                         <button
                             onClick={handleSave}
