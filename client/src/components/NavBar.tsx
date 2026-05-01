@@ -10,7 +10,8 @@ function Nav() {
     const [menuIsOn, setMenuIsOn] = useState(false);
     const [dropDownIsOn, setDropDownIsOn] = useState(false);
 
-    const session = true
+    const { data: session } = authClient.useSession()
+    console.log(session?.user)
 
     const defaultAvatar = "https://o1n6wjzhyksrqjmz.public.blob.vercel-storage.com/profilepicture.png"
 
@@ -20,7 +21,7 @@ function Nav() {
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    navigate("/login");
+                    navigate("/auth/login");
                 },
                 onError: (context) => {
                     console.error("Sign out error:", context.error);
@@ -54,7 +55,7 @@ function Nav() {
                     <Link to="/log" className="transition-colors duration-200 hover:text-(--text)">
                         Log
                     </Link>
-                    {session ? (
+                    {session?.user ? (
                         <div className="relative">
                             <button 
                                 className="group flex items-center gap-3 ml-2 p-1 pl-6 border-l border-(--border)" 
@@ -70,8 +71,8 @@ function Nav() {
                                     }`} 
                                 />
                                 <div className="flex items-center gap-3">
-                                    <span className="font-mono text-xs text-(--text-dim) group-hover:text-(--text) transition-colors duration-200 truncate">D4RK</span>
-                                    <img src={defaultAvatar} alt="D" className="h-7 p-1 border border-(--border) rounded-xs"/>
+                                    <span className="font-mono text-xs text-(--text-dim) group-hover:text-(--text) transition-colors duration-200 truncate">{session?.user?.name || "Unkown"}</span>
+                                    <img src={session?.user?.image || defaultAvatar} alt={(session?.user?.name || "Unkown")[0]} className="h-7 p-1 border border-(--border) rounded-xs"/>
                                 </div>
                             </button>
 
