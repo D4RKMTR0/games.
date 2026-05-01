@@ -57,6 +57,18 @@ function Settings() {
         }
     }, [section])
 
+    useEffect(() => {
+        if (!success && !error) return;
+
+        const timer = setTimeout(() => {
+            setSuccess(null);
+            setError(null);
+        }, 5000);
+
+        return () => clearTimeout(timer);
+
+    }, [success, error])
+
     const handleSave = async () => {
         setLoading(true)
         setError(null)
