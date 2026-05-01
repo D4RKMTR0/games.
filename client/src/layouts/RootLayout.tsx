@@ -10,9 +10,9 @@ function RootLayout() {
     const location = useLocation()
     const showFooter = !noFooterRoutes.includes(location.pathname)
 
-    useTheme()
     return (
         <>  
+            {useTheme()}
             <ScrollToTop />
             <div className="flex flex-col min-h-screen">
                 <Nav />

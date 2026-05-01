@@ -68,4 +68,21 @@ router.delete("/delete", requireAuth, async (req, res) => {
     res.json({ success: true })
 })
 
+router.patch("/reset-avatar", requireAuth, async (req, res) => {
+    const userId = req.user!.id;
+    const defaultAvatar = "https://o1n6wjzhyksrqjmz.public.blob.vercel-storage.com/profilepicture.png";
+
+    await pool.query(
+        `UPDATE "user" 
+         SET image = $1, "updatedAt" = NOW() 
+         WHERE id = $2`,
+        [defaultAvatar, userId]
+    );
+
+    res.json({ 
+        success: true, 
+        url: defaultAvatar 
+    });
+});
+
 export default router;

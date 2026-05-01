@@ -25,6 +25,8 @@ function Settings() {
     const [loading, setLoading] = useState(false)
     const [avatarLoading, setAvatarLoading] = useState(false)
     const [deleteLoading, setDeleteLoading] = useState(false)
+    const [resetLoading, setResetLoading] = useState(false);
+    const [showResetAvatarConfirm, setShowResetAvatarConfirm] = useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -114,6 +116,19 @@ function Settings() {
         }
     }
 
+    const handleResetAvatar = async () => {
+        setResetLoading(true);
+        try {
+            await api.patch("/api/user/reset-avatar", { });
+            
+            alert("Profile picture reset successfully!");
+        } catch (e: any) {
+            setError("Failed to reset profile picture");
+        } finally {
+            setResetLoading(false);
+        }
+    };
+
     const totalGames = stats.reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
     const totalWins = stats.reduce((acc, s) => acc + s.won, 0)
     const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0
@@ -153,7 +168,7 @@ function Settings() {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 flex flex-col gap-8 overflow-y-auto">
+                <div className="pt-8 pl-8 pr-8 flex flex-col gap-8 overflow-y-auto">
 
                     {section === "account" && (
                         <>
@@ -234,8 +249,41 @@ function Settings() {
                                 Sign out
                             </button>
 
-                            {/* Danger zone */}
-                            <div className="flex flex-col gap-3 pt-4 border-t border-(--red-muted)">
+                            <div className="flex flex-col gap-4 pt-2 border-t border-(--border)">
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-muted)">Reset to defaults</span>
+
+                                {!showResetAvatarConfirm ? (
+                                    <button
+                                        onClick={() => setShowResetAvatarConfirm(true)}
+                                        className="w-fit border border-(--text-muted) text-(--text-muted) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:bg-(--bg-mid) transition-colors duration-200"
+                                    >
+                                        Reset Avatar
+                                    </button>
+                                ) : (
+                                    <div className="flex flex-col gap-3 border border-(--border) p-4 max-w-sm">
+                                        <p className="font-mono text-xs text-(--text-dim) leading-relaxed">
+                                            This will reset your profile avatar back to the default. Continue?
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handleResetAvatar}
+                                                disabled={deleteLoading}
+                                                className="border border-(--text-muted) text-(--text-muted) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:bg-(--bg-mid) transition-colors duration-200 disabled:opacity-40"
+                                            >
+                                                {resetLoading ? "Resetting..." : "Confirm reset"}
+                                            </button>
+                                            <button
+                                                onClick={() => setShowResetAvatarConfirm(false)}
+                                                className="border border-(--border) text-(--text-muted) px-4 py-2 font-mono text-xs tracking-widest uppercase hover:text-(--text) transition-colors duration-200"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-4 pt-2 border-t border-(--red-muted)">
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--red-base)">Danger zone</span>
 
                                 {!showDeleteConfirm ? (
@@ -339,7 +387,7 @@ function Settings() {
                     )}
 
                     {section !== "stats" && (
-                        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border) sticky bottom-0 bg-(--bg)">
+                        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-(--border) md:sticky md:bottom-0 md:bg-(--bg) pb-4">
                             <button
                                 onClick={handleSave}
                                 disabled={loading}
@@ -351,7 +399,6 @@ function Settings() {
                             {error && <span className="font-mono text-xs text-(--red-base)">{error}</span>}
                         </div>
                     )}
-
                 </div>
             </div>
         </motion.div>
