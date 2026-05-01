@@ -396,7 +396,7 @@ function Settings() {
                             >
                                 {loading ? "Saving..." : "Save changes"}
                             </button>
-                            {success && <span className="font-mono text-xs text-(--green-base)">Saved.</span>}
+                            {success && <span className="font-mono text-xs text-(--green-base)">{success}</span>}
                             {error && <span className="font-mono text-xs text-(--red-base)">{error}</span>}
                         </div>
                     )}
