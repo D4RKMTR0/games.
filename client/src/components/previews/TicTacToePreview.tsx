@@ -8,7 +8,7 @@ interface TicTacToePreviewProps {
     className?: string;
 }
 
-function TicTacToePreview({ isHovered, onGameStart, onGameEnd , className = "" }: TicTacToePreviewProps) {
+function TicTacToePreview({ isHovered, className = "" }: TicTacToePreviewProps) {
     const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
     const [, setStep] = useState(0);
     const [showWin, setShowWin] = useState(false);
