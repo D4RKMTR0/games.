@@ -15,7 +15,7 @@ export const changelog: ChangelogEntry[] = [
         tag: "new game",
         title: "Tic Tac Toe",
         description: "First game live. A remake of the classic with a Minimax AI opponent.",
-        path: "/games/tictactoe",
+        path: "/game/tictactoe",
         previewId: "tictactoe",
     },
     {

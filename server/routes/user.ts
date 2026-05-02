@@ -7,7 +7,6 @@ import sharp from "sharp";
 
 const router = Router();
 
-// ─── Authenticated routes first ──────────────────────────────────────────────
 
 router.patch("/update", requireAuth, async (req, res) => {
     const userId = req.user!.id;
@@ -87,7 +86,6 @@ router.patch("/reset-avatar", requireAuth, async (req, res) => {
     });
 });
 
-// ─── Public routes last (wildcards must come after named routes) ──────────────
 
 router.get("/:username/stats", async (req, res) => {
     const { username } = req.params;

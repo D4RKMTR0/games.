@@ -17,7 +17,7 @@ export const games: Game[] = [
         releaseOrder: 1,
         status: "live",
         previewId: "tictactoe",
-        path: "/games/tictactoe",
+        path: "/game/tictactoe",
     },
     {
         id: "connect-4",
