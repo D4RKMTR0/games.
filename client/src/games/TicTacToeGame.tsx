@@ -123,6 +123,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
     const [result, setResult] = useState<"won" | "lost" | "drew" | null>(null)
     const [currentTurn, setCurrentTurn] = useState<"X" | "O">("X")
     const [gameStarted, setGameStarted] = useState(settings.mode === "ai" && settings.side === "O")
+    const [winningLine, setWinningLine] = useState<number[] | null>(null)
 
     const resetGame = (notify = true) => {
         setBoard(Array(9).fill(""))
@@ -131,6 +132,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
         setCurrentTurn("X")
         setGameStarted(settings.mode === "ai" && settings.side === "O")
         setIsAIThinking(settings.mode === "ai" && settings.side === "O")
+        setWinningLine(null)
         if (notify) onGameEnd()
     }
 
@@ -160,6 +162,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
 
         const winner = checkWinner(newBoard)
         if (winner) {
+            setWinningLine(winner.line)
             handleGameOver(winner.winner === settings.side ? "won" : "lost")
             return
         }
@@ -194,6 +197,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
 
             const winner = checkWinner(newBoard)
             if (winner) {
+                setWinningLine(winner.line)
                 handleGameOver(winner.winner === settings.side ? "won" : "lost")
             } else if (isDraw(newBoard)) {
                 handleGameOver("drew")
@@ -246,7 +250,11 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
                     {board.map((cell, index) => (
                         <button
                             key={index}
-                            className={`flex justify-center items-center border-r-3 border-b-3 border-(--border) aspect-square cursor-pointer ${board[index] !== "" || isAIThinking || gameOver ? "pointer-events-none" : ""}`}
+                            className={`flex justify-center items-center border-r-3 border-b-3 border-(--border) aspect-square cursor-pointer ${
+                                board[index] !== "" || isAIThinking || gameOver ? "pointer-events-none" : ""
+                            } ${
+                                winningLine?.includes(index) ? "bg-(--border)" : ""
+                            }`}
                             onClick={() => handleClick(index)}
                         >
                             {cell === "O" ? (
