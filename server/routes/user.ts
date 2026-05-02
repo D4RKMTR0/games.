@@ -96,8 +96,8 @@ router.post("/history", requireAuth, async (req, res) => {
     }
 
     await pool.query(
-        `INSERT INTO match_history (user_id, game_id, result, difficulty)
-         VALUES ($1, $2, $3, $4)`,
+        `INSERT INTO history (user_id, game_id, result, difficulty)
+        VALUES ($1, $2, $3, $4)`,
         [userId, game_id, result, difficulty ?? null]
     );
 
@@ -146,9 +146,9 @@ router.get("/:username/history", async (req, res) => {
 
     const historyResult = await pool.query(
         `SELECT id, game_id, result, played_at
-         FROM match_history
-         WHERE user_id = $1
-         ORDER BY played_at DESC`,
+        FROM history
+        WHERE user_id = $1
+        ORDER BY played_at DESC`,
         [userId]
     );
 

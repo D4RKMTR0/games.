@@ -231,7 +231,7 @@ function GamePage() {
                         <span className="font-mono text-xs text-(--text-dim)">No games played yet. Be the first!</span>
                     ) : (
                         <div className="flex flex-col border-t border-(--border)">
-                            <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 py-2 border-b border-(--border)">
+                            <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 py-2 border-b border-(--border) px-1">
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-6">#</span>
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Player</span>
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">W</span>
@@ -246,7 +246,7 @@ function GamePage() {
                                     <div
                                         key={entry.username}
                                         onClick={() => navigate(`/user/${entry.username}`)}
-                                        className={`grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 items-center py-3 border-b border-(--border) cursor-pointer hover:bg-(--bg-subtle) transition-colors duration-150 ${isTop ? "bg-(--bg-subtle)" : ""}`}
+                                        className={`px-1 grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 items-center py-3 border-b border-(--border) cursor-pointer hover:bg-(--bg-subtle) transition-colors duration-150 ${isTop ? "bg-(--bg-subtle)" : ""}`}
                                     >
                                         <span className={`font-mono text-xs w-6 ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
                                             {i + 1}
