@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { motion } from "framer-motion"
 import { useParams, useNavigate } from "react-router"
 import { api } from "../lib/api"
@@ -39,15 +39,13 @@ function GamePage() {
             mode: "ai",
             side: "X",
         }
-    );
+    )
 
-    
-
-    const [user, setUser] = useState<any>(null);
-    const [authLoading, setAuthLoading] = useState(true);
+    const [user, setUser] = useState<any>(null)
+    const [authLoading, setAuthLoading] = useState(true)
     const { setLoginOpen } = useOutletContext<any>()
 
-    useEffect(() => {
+    const fetchLeaderboard = useCallback(() => {
         if (!id) return
         setLeaderboardLoading(true)
         api.get(`/api/stats/leaderboard/${id}`)
@@ -57,14 +55,18 @@ function GamePage() {
     }, [id])
 
     useEffect(() => {
+        fetchLeaderboard()
+    }, [fetchLeaderboard])
+
+    useEffect(() => {
         authClient.getSession()
             .then((res) => {
-                setUser(res?.data?.user ?? null);
+                setUser(res?.data?.user ?? null)
             })
-            .finally(() => setAuthLoading(false));
-    }, []);
+            .finally(() => setAuthLoading(false))
+    }, [])
 
-    const isLoggedIn = !!user;
+    const isLoggedIn = !!user
 
     if (!game) {
         return (
@@ -104,13 +106,7 @@ function GamePage() {
                     {/* Preview */}
                     {PreviewComponent && !playing && (
                         <div
-                            className="
-                                shrink-0 
-                                w-40 h-40 
-                                mx-auto md:mx-0
-                                cursor-pointer
-                                flex items-center justify-center
-                            "
+                            className="shrink-0 w-40 h-40 mx-auto md:mx-0 cursor-pointer flex items-center justify-center"
                             onMouseEnter={() => setPreviewHovered(true)}
                             onMouseLeave={() => setPreviewHovered(false)}
                         >
@@ -134,14 +130,9 @@ function GamePage() {
                             {game.status === "live" ? (
                                 <button
                                     onClick={() => {
-                                        if (authLoading) return;
-
-                                        if (!isLoggedIn) {
-                                            setLoginOpen(true);
-                                            return;
-                                        }
-
-                                        setPlaying(p => !p);
+                                        if (authLoading) return
+                                        if (!isLoggedIn) { setLoginOpen(true); return }
+                                        setPlaying(p => !p)
                                     }}
                                     className="bg-(--text) text-(--bg) px-8 py-3 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200"
                                 >
@@ -167,11 +158,11 @@ function GamePage() {
                                     <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">mode</span>
                                     <SegmentedControl
                                         value={settings.mode}
-                                        onChange={(v) => setSettings(prev => ({ 
-                                            ...prev, 
+                                        onChange={(v) => setSettings(prev => ({
+                                            ...prev,
                                             difficulty: v === "local" ? "easy" : prev.difficulty,
                                             mode: v,
-                                            side: v === "local" ? "X" : prev.side 
+                                            side: v === "local" ? "X" : prev.side
                                         }))}
                                         options={[
                                             { label: "AI", value: "ai" },
@@ -184,9 +175,7 @@ function GamePage() {
                                     <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">difficulty</span>
                                     <SegmentedControl
                                         value={settings.difficulty}
-                                        onChange={(v) =>
-                                            setSettings(prev => ({ ...prev, difficulty: v }))
-                                        }
+                                        onChange={(v) => setSettings(prev => ({ ...prev, difficulty: v }))}
                                         options={[
                                             { label: "Easy", value: "easy" },
                                             { label: "Medium", value: "medium" },
@@ -199,9 +188,7 @@ function GamePage() {
                                     <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">Side</span>
                                     <SegmentedControl
                                         value={settings.side}
-                                        onChange={(v) =>
-                                            setSettings(prev => ({ ...prev, side: v }))
-                                        }
+                                        onChange={(v) => setSettings(prev => ({ ...prev, side: v }))}
                                         options={[
                                             { label: <X size={16} />, value: "X" },
                                             { label: <Circle size={16} />, value: "O" },
@@ -213,7 +200,15 @@ function GamePage() {
                         </div>
 
                         {GameComponent && (
-                            <GameComponent settings={settings} onGameStart={() => setIsGameActive(true)} onGameEnd={() => setIsGameActive(false)} onBack={() => setPlaying(false)}/>
+                            <GameComponent
+                                settings={settings}
+                                onGameStart={() => setIsGameActive(true)}
+                                onGameEnd={() => {
+                                    setIsGameActive(false)
+                                    setTimeout(() => fetchLeaderboard(), 1000)
+                                }}
+                                onBack={() => setPlaying(false)}
+                            />
                         )}
                     </div>
                 )}
