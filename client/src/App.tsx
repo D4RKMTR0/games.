@@ -7,6 +7,7 @@ import About from './pages/About';
 import Log from './pages/Log';
 import Auth from './pages/Auth';
 import Settings from './pages/Settings';
+import UserProfile from './pages/UserProfile';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "user/settings",
         element: <Settings />
+      },
+      {
+        path: "user/:username",
+        element: <UserProfile />
       },
     ],
   },

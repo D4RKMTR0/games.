@@ -182,7 +182,7 @@ function Settings() {
                 </div>
 
                 {/* Content */}
-                <div className="pt-8 pl-8 pr-8 flex flex-col gap-8 overflow-y-auto">
+                <div className="pt-8 pl-8 pr-8 flex flex-col gap-8 overflow-y-auto ">
 
                     {section === "account" && (
                         <>

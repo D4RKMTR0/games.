@@ -72,6 +72,7 @@
 .light {
   --bg: oklch(96% 0 0);
   --bg-subtle: oklch(92% 0 0);
+  --bg-mid:    oklch(88% 0 0);
   --border: oklch(85% 0 0);
   --border-mid: oklch(75% 0 0);
   
