@@ -86,6 +86,23 @@ router.patch("/reset-avatar", requireAuth, async (req, res) => {
     });
 });
 
+router.post("/history", requireAuth, async (req, res) => {
+    const userId = req.user!.id;
+    const { game_id, result, difficulty } = req.body;
+
+    if (!game_id || !result) {
+        res.status(400).json({ error: "game_id and result are required" });
+        return;
+    }
+
+    await pool.query(
+        `INSERT INTO match_history (user_id, game_id, result, difficulty)
+         VALUES ($1, $2, $3, $4)`,
+        [userId, game_id, result, difficulty ?? null]
+    );
+
+    res.json({ success: true });
+});
 
 router.get("/:username/stats", async (req, res) => {
     const { username } = req.params;
