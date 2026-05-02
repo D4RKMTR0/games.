@@ -8,6 +8,9 @@ import Log from './pages/Log';
 import Auth from './pages/Auth';
 import Settings from './pages/Settings';
 import UserProfile from './pages/UserProfile';
+import GamePage from './pages/GamePage';
+
+
 
 const router = createBrowserRouter([
   {
@@ -32,7 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "game/:id",
-        element: <div className="p-10 font-mono text-xs">BOOTING_MODULE...</div>,
+        element: <GamePage /> 
       },
       {
         path: "auth/signup",

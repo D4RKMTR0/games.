@@ -1,15 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { motion } from "framer-motion"
 import { useParams, useNavigate } from "react-router"
 import { api } from "../lib/api"
-
-interface GameMeta {
-    id: string
-    title: string
-    description: string
-    longDescription: string
-    status: "available" | "coming_soon"
-}
+import { authClient } from "../lib/auth-client"
+import { games, type GameSettings } from "../data/games"
+import { PREVIEW_COMPONENTS } from "../components/previews/previewregistry"
+import SegmentedControl from "../components/ui/SegmentedControl"
+import { useOutletContext } from "react-router"
+import { Circle, X } from "lucide-react"
 
 interface LeaderboardEntry {
     username: string
@@ -18,26 +16,36 @@ interface LeaderboardEntry {
     won: number
     lost: number
     drew: number
-}
-
-const GAMES: Record<string, GameMeta> = {
-    tictactoe: {
-        id: "tictactoe",
-        title: "Tic Tac Toe",
-        description: "Classic 3×3 grid. X vs O. First to three wins.",
-        longDescription: "The timeless game of Tic Tac Toe. Place your mark, block your opponent, and claim three in a row — horizontally, vertically, or diagonally. Simple rules, sharp minds.",
-        status: "available",
-    },
+    win_rate: number
 }
 
 function GamePage() {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
-    const game = id ? GAMES[id] : null
+    const game = games.find(g => g.id === id)
 
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
     const [leaderboardLoading, setLeaderboardLoading] = useState(true)
     const [playing, setPlaying] = useState(false)
+    const [previewHovered, setPreviewHovered] = useState(false)
+    const [isGameActive, setIsGameActive] = useState(false)
+
+    const PreviewComponent = id ? PREVIEW_COMPONENTS[id] : null
+    const GameComponent = game?.component
+
+    const [settings, setSettings] = useState<GameSettings>(
+        game?.defaultSettings ?? {
+            difficulty: "easy",
+            mode: "ai",
+            side: "X",
+        }
+    );
+
+    
+
+    const [user, setUser] = useState<any>(null);
+    const [authLoading, setAuthLoading] = useState(true);
+    const { setLoginOpen } = useOutletContext<any>()
 
     useEffect(() => {
         if (!id) return
@@ -47,6 +55,16 @@ function GamePage() {
             .catch(() => setLeaderboard([]))
             .finally(() => setLeaderboardLoading(false))
     }, [id])
+
+    useEffect(() => {
+        authClient.getSession()
+            .then((res) => {
+                setUser(res?.data?.user ?? null);
+            })
+            .finally(() => setAuthLoading(false));
+    }, []);
+
+    const isLoggedIn = !!user;
 
     if (!game) {
         return (
@@ -81,50 +99,122 @@ function GamePage() {
             <div className="w-full max-w-4xl mt-10 mb-10 flex flex-col border border-(--border)">
 
                 {/* Hero */}
-                <div className="flex flex-col md:flex-row md:items-end gap-6 p-8 border-b border-(--border)">
-                    <div className="flex flex-col gap-3 flex-1">
-                        <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Game / {game.id}</span>
-                        <h1 className="font-bold text-3xl text-(--text)">{game.title}</h1>
-                        <p className="font-mono text-xs text-(--text-dim) leading-relaxed max-w-md">{game.longDescription}</p>
-                    </div>
+                <div className="flex flex-col md:flex-row gap-8 p-8 border-b border-(--border)">
 
-                    <div className="flex flex-col gap-2 shrink-0">
-                        {game.status === "available" ? (
-                            <button
-                                onClick={() => setPlaying(true)}
-                                className="bg-(--text) text-(--bg) px-8 py-3 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200"
-                            >
-                                Play now
-                            </button>
-                        ) : (
-                            <button disabled className="border border-(--border) text-(--text-dim) px-8 py-3 font-mono text-xs tracking-widest uppercase opacity-40 cursor-not-allowed">
-                                Coming soon
-                            </button>
-                        )}
-                        <span className="font-mono text-[10px] text-(--text-dim) text-center">{totalGames} games played</span>
+                    {/* Preview */}
+                    {PreviewComponent && !playing && (
+                        <div
+                            className="
+                                shrink-0 
+                                w-40 h-40 
+                                mx-auto md:mx-0
+                                cursor-pointer
+                                flex items-center justify-center
+                            "
+                            onMouseEnter={() => setPreviewHovered(true)}
+                            onMouseLeave={() => setPreviewHovered(false)}
+                        >
+                            <Suspense fallback={<div className="w-full h-full border border-(--border) bg-(--bg-subtle)" />}>
+                                <PreviewComponent isHovered={previewHovered} className="w-full h-full" />
+                            </Suspense>
+                        </div>
+                    )}
+
+                    {/* Info + CTA */}
+                    <div className="flex flex-col justify-between gap-6 flex-1">
+                        <div className="flex flex-col gap-3">
+                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Game / {game.id}</span>
+                            <h1 className="font-bold text-3xl text-(--text)">{game.title}</h1>
+                            <p className="font-mono text-xs text-(--text-dim) leading-relaxed max-w-md">
+                                {game.longDescription ?? game.description}
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            {game.status === "live" ? (
+                                <button
+                                    onClick={() => {
+                                        if (authLoading) return;
+
+                                        if (!isLoggedIn) {
+                                            setLoginOpen(true);
+                                            return;
+                                        }
+
+                                        setPlaying(p => !p);
+                                    }}
+                                    className="bg-(--text) text-(--bg) px-8 py-3 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200"
+                                >
+                                    {playing ? "Close" : "Play now"}
+                                </button>
+                            ) : (
+                                <button disabled className="border border-(--border) text-(--text-dim) px-8 py-3 font-mono text-xs tracking-widest uppercase opacity-40 cursor-not-allowed">
+                                    Coming soon
+                                </button>
+                            )}
+                            <span className="font-mono text-[10px] text-(--text-dim)">{totalGames} games played</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Play area */}
                 {playing && (
-                    <div className="flex flex-col gap-4 p-8 border-b border-(--border)">
-                        <div className="flex items-center justify-between">
-                            <div className="flex flex-col gap-1">
-                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Play</span>
-                                <h2 className="font-bold text-lg text-(--text)">vs AI</h2>
+                    <div className="flex flex-col gap-6 p-8 border-b border-(--border)">
+                        <div className="flex flex-col gap-1">
+                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Play</span>
+                            <div className="flex gap-3 flex-wrap">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">mode</span>
+                                    <SegmentedControl
+                                        value={settings.mode}
+                                        onChange={(v) => setSettings(prev => ({ 
+                                            ...prev, 
+                                            difficulty: v === "local" ? "easy" : prev.difficulty,
+                                            mode: v,
+                                            side: v === "local" ? "X" : prev.side 
+                                        }))}
+                                        options={[
+                                            { label: "AI", value: "ai" },
+                                            { label: "Local MP", value: "local" },
+                                        ]}
+                                        disabled={isGameActive}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">difficulty</span>
+                                    <SegmentedControl
+                                        value={settings.difficulty}
+                                        onChange={(v) =>
+                                            setSettings(prev => ({ ...prev, difficulty: v }))
+                                        }
+                                        options={[
+                                            { label: "Easy", value: "easy" },
+                                            { label: "Medium", value: "medium" },
+                                            { label: "Hard", value: "hard" },
+                                        ]}
+                                        disabled={settings.mode === 'local' || isGameActive}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase ml-0.5">Side</span>
+                                    <SegmentedControl
+                                        value={settings.side}
+                                        onChange={(v) =>
+                                            setSettings(prev => ({ ...prev, side: v }))
+                                        }
+                                        options={[
+                                            { label: <X size={16} />, value: "X" },
+                                            { label: <Circle size={16} />, value: "O" },
+                                        ]}
+                                        disabled={settings.mode === 'local' || isGameActive}
+                                    />
+                                </div>
                             </div>
-                            <button
-                                onClick={() => setPlaying(false)}
-                                className="font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200"
-                            >
-                                Close
-                            </button>
                         </div>
 
-                        {/* Game board placeholder — will be replaced with actual game */}
-                        <div className="flex items-center justify-center border border-(--border) h-64">
-                            <span className="font-mono text-xs text-(--text-dim)">Game board loading...</span>
-                        </div>
+                        {GameComponent && (
+                            <GameComponent settings={settings} onGameStart={() => setIsGameActive(true)} onGameEnd={() => setIsGameActive(false)} onBack={() => setPlaying(false)}/>
+                        )}
                     </div>
                 )}
 
@@ -141,7 +231,6 @@ function GamePage() {
                         <span className="font-mono text-xs text-(--text-dim)">No games played yet. Be the first!</span>
                     ) : (
                         <div className="flex flex-col border-t border-(--border)">
-                            {/* Header */}
                             <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 py-2 border-b border-(--border)">
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-6">#</span>
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Player</span>
@@ -152,18 +241,15 @@ function GamePage() {
                             </div>
 
                             {leaderboard.map((entry, i) => {
-                                const total = entry.won + entry.lost + entry.drew
-                                const wr = total > 0 ? Math.round((entry.won / total) * 100) : 0
                                 const isTop = i === 0
-
                                 return (
                                     <div
                                         key={entry.username}
                                         onClick={() => navigate(`/user/${entry.username}`)}
                                         className={`grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 items-center py-3 border-b border-(--border) cursor-pointer hover:bg-(--bg-subtle) transition-colors duration-150 ${isTop ? "bg-(--bg-subtle)" : ""}`}
                                     >
-                                        <span className={`font-mono text-xs w-6 ${isTop ? "text-(--text)" : "text-(--text-dim)"}`}>
-                                            {i === 0 ? "—" : i + 1}
+                                        <span className={`font-mono text-xs w-6 ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
+                                            {i + 1}
                                         </span>
 
                                         <div className="flex items-center gap-3 min-w-0">
@@ -175,7 +261,7 @@ function GamePage() {
                                                 </div>
                                             )}
                                             <div className="flex flex-col min-w-0">
-                                                <span className={`font-bold text-sm truncate ${isTop ? "text-(--text)" : "text-(--text)"}`}>{entry.name}</span>
+                                                <span className="font-bold text-sm text-(--text) truncate">{entry.name}</span>
                                                 <span className="font-mono text-[10px] text-(--text-dim)">@{entry.username}</span>
                                             </div>
                                         </div>
@@ -183,7 +269,9 @@ function GamePage() {
                                         <span className="font-mono text-sm text-(--green-base) w-10 text-right">{entry.won}</span>
                                         <span className="font-mono text-sm text-(--red-base) w-10 text-right">{entry.lost}</span>
                                         <span className="font-mono text-sm text-(--text-muted) w-10 text-right">{entry.drew}</span>
-                                        <span className={`font-mono text-sm w-14 text-right ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>{wr}%</span>
+                                        <span className={`font-mono text-sm w-14 text-right ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
+                                            {entry.win_rate}%
+                                        </span>
                                     </div>
                                 )
                             })}

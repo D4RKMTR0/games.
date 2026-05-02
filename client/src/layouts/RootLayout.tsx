@@ -3,12 +3,16 @@ import Nav from "../components/NavBar";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import { useTheme } from "../hooks/useTheme";
+import LoginModal from "../components/ui/LoginModal";
+import { useState } from "react";
 
 const noFooterRoutes = ["/auth/login", "/auth/signup", "/user/settings"]
 
 function RootLayout() {
     const location = useLocation()
     const showFooter = !noFooterRoutes.includes(location.pathname)
+
+    const [loginOpen, setLoginOpen] = useState(false)
 
     return (
         <>  
@@ -17,9 +21,13 @@ function RootLayout() {
             <div className="flex flex-col min-h-screen">
                 <Nav />
                 <main className="flex-grow">
-                    <Outlet />
+                    <Outlet context={{ setLoginOpen }} />
                 </main>
                 {showFooter && <Footer />}
+                <LoginModal
+                    open={loginOpen}
+                    onClose={() => setLoginOpen(false)}
+                />
             </div>
         </>
     );
