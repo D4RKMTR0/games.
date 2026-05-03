@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useParams, useNavigate } from "react-router"
 import { api } from "../lib/api"
 
@@ -23,6 +23,7 @@ interface MatchHistory {
     id: string
     game_id: string
     result: "won" | "lost" | "drew"
+    difficulty: string | null
     played_at: string
 }
 
@@ -35,7 +36,7 @@ interface Achievement {
     unlocked_at: string
 }
 
-function UserPage() {
+function UserProfile() {
     const { username } = useParams<{ username: string }>()
     const navigate = useNavigate()
 
@@ -49,11 +50,11 @@ function UserPage() {
 
     const [history, setHistory] = useState<MatchHistory[]>([])
     const [historyLoading, setHistoryLoading] = useState(false)
+    const [expandedHistory, setExpandedHistory] = useState<string | null>(null)
 
     const [achievements, setAchievements] = useState<Achievement[]>([])
     const [achievementsLoading, setAchievementsLoading] = useState(false)
 
-    // Load profile first
     useEffect(() => {
         if (!username) return
         setProfileLoading(true)
@@ -68,7 +69,6 @@ function UserPage() {
             .finally(() => setProfileLoading(false))
     }, [username])
 
-    // Lazy-load tab data on demand
     useEffect(() => {
         if (!username || !profile) return
 
@@ -97,7 +97,6 @@ function UserPage() {
         }
     }, [tab, username, profile])
 
-    // Stats computed values
     const totalGames = stats.reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
     const totalWins = stats.reduce((acc, s) => acc + s.won, 0)
     const totalLosses = stats.reduce((acc, s) => acc + s.lost, 0)
@@ -128,6 +127,12 @@ function UserPage() {
         if (result === "won") return "W"
         if (result === "lost") return "L"
         return "D"
+    }
+
+    const resultText = (result: string) => {
+        if (result === "won") return "Victory"
+        if (result === "lost") return "Defeat"
+        return "Draw"
     }
 
     if (profileLoading) {
@@ -184,11 +189,7 @@ function UserPage() {
                 <div className="flex flex-col md:flex-row md:items-end gap-6 p-8 border-b border-(--border)">
                     <div className="shrink-0">
                         {profile.image ? (
-                            <img
-                                src={profile.image}
-                                alt={profile.name}
-                                className="w-20 h-20 border border-(--border) object-cover"
-                            />
+                            <img src={profile.image} alt={profile.name} className="w-20 h-20 border border-(--border) object-cover" />
                         ) : (
                             <div className="w-20 h-20 border border-(--border) flex items-center justify-center font-bold text-3xl text-(--text-muted)">
                                 {profile.name?.[0]?.toUpperCase() ?? "?"}
@@ -267,26 +268,26 @@ function UserPage() {
                                     {/* Summary cards */}
                                     <div className="grid grid-cols-2 md:grid-cols-4 border border-(--border)">
                                         {[
-                                            ["Total games", totalGames.toString(), ""],
+                                            ["Total", totalGames.toString(), ""],
                                             ["Win rate", `${winRate}%`, "text-(--green-base)"],
                                             ["Wins", totalWins.toString(), "text-(--green-base)"],
-                                            ["Favorite", favoriteGame ?? "—", ""],
+                                            ["Fav", favoriteGame ?? "—", ""],
                                         ].map(([label, value, colorClass]) => (
-                                            <div key={label} className="flex flex-col gap-1 p-4 border-r last:border-r-0 border-(--border)">
+                                            <div key={label} className="flex flex-col gap-1 p-4 border-r last:border-r-0 border-b md:border-b-0 border-(--border)">
                                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">{label}</span>
-                                                <span className={`font-bold text-xl text-(--text) ${colorClass}`}>{value}</span>
+                                                <span className={`font-bold text-xl text-(--text) capitalize truncate ${colorClass}`}>{value}</span>
                                             </div>
                                         ))}
                                     </div>
 
                                     {/* Per-game table */}
                                     <div className="flex flex-col border-t border-(--border)">
-                                        <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 py-2 border-b border-(--border)">
+                                        <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[1fr_auto_auto_auto_auto] gap-2 md:gap-4 py-2 border-b border-(--border)">
                                             <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Game</span>
-                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">W</span>
-                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">L</span>
-                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">D</span>
-                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-16 text-right">Total</span>
+                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-8 md:w-10 text-right">W</span>
+                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-8 md:w-10 text-right">L</span>
+                                            <span className="hidden md:block font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">D</span>
+                                            <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-12 md:w-16 text-right">Total</span>
                                         </div>
 
                                         {stats
@@ -296,30 +297,30 @@ function UserPage() {
                                                 const total = s.won + s.lost + s.drew
                                                 const wr = total > 0 ? Math.round((s.won / total) * 100) : 0
                                                 return (
-                                                    <div key={s.game_id} className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 items-center py-4 border-b border-(--border)">
-                                                        <div className="flex flex-col gap-0.5">
-                                                            <span className="font-bold text-sm text-(--text) capitalize">{s.game_id}</span>
+                                                    <div key={s.game_id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[1fr_auto_auto_auto_auto] gap-2 md:gap-4 items-center py-4 border-b border-(--border)">
+                                                        <div className="flex flex-col gap-0.5 min-w-0">
+                                                            <span className="font-bold text-sm text-(--text) capitalize truncate">{s.game_id}</span>
                                                             <div className="flex items-center gap-2">
-                                                                <div className="w-20 h-[2px] bg-(--border)">
+                                                                <div className="w-12 md:w-20 h-[2px] bg-(--border)">
                                                                     <div className="h-full bg-(--green-base) transition-all duration-500" style={{ width: `${wr}%` }} />
                                                                 </div>
-                                                                <span className="font-mono text-[10px] text-(--text-dim)">{wr}% wr</span>
+                                                                <span className="font-mono text-[10px] text-(--text-dim)">{wr}%</span>
                                                             </div>
                                                         </div>
-                                                        <span className="font-mono text-sm text-(--green-base) w-10 text-right">{s.won}</span>
-                                                        <span className="font-mono text-sm text-(--red-base) w-10 text-right">{s.lost}</span>
-                                                        <span className="font-mono text-sm text-(--text-muted) w-10 text-right">{s.drew}</span>
-                                                        <span className="font-mono text-sm text-(--text-dim) w-16 text-right">{total}</span>
+                                                        <span className="font-mono text-sm text-(--green-base) w-8 md:w-10 text-right">{s.won}</span>
+                                                        <span className="font-mono text-sm text-(--red-base) w-8 md:w-10 text-right">{s.lost}</span>
+                                                        <span className="hidden md:block font-mono text-sm text-(--text-muted) w-10 text-right">{s.drew}</span>
+                                                        <span className="font-mono text-sm text-(--text-dim) w-12 md:w-16 text-right">{total}</span>
                                                     </div>
                                                 )
                                             })}
 
-                                        <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 items-center py-4">
+                                        <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[1fr_auto_auto_auto_auto] gap-2 md:gap-4 items-center py-4">
                                             <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Total</span>
-                                            <span className="font-mono text-sm font-bold text-(--green-base) w-10 text-right">{totalWins}</span>
-                                            <span className="font-mono text-sm font-bold text-(--red-base) w-10 text-right">{totalLosses}</span>
-                                            <span className="font-mono text-sm font-bold text-(--text-muted) w-10 text-right">{totalDraws}</span>
-                                            <span className="font-mono text-sm font-bold text-(--text) w-16 text-right">{totalGames}</span>
+                                            <span className="font-mono text-sm font-bold text-(--green-base) w-8 md:w-10 text-right">{totalWins}</span>
+                                            <span className="font-mono text-sm font-bold text-(--red-base) w-8 md:w-10 text-right">{totalLosses}</span>
+                                            <span className="hidden md:block font-mono text-sm font-bold text-(--text-muted) w-10 text-right">{totalDraws}</span>
+                                            <span className="font-mono text-sm font-bold text-(--text) w-12 md:w-16 text-right">{totalGames}</span>
                                         </div>
                                     </div>
                                 </>
@@ -341,20 +342,60 @@ function UserPage() {
                                 <span className="font-mono text-xs text-(--text-dim)">No matches played yet.</span>
                             ) : (
                                 <div className="flex flex-col border-t border-(--border)">
-                                    <div className="grid grid-cols-[auto_1fr_auto] gap-4 py-2 border-b border-(--border)">
-                                        <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-6"></span>
-                                        <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Game</span>
-                                        <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Date</span>
-                                    </div>
-                                    {history.map(h => (
-                                        <div key={h.id} className="grid grid-cols-[auto_1fr_auto] gap-4 items-center py-3 border-b border-(--border)">
-                                            <span className={`font-mono text-xs font-bold w-6 ${resultColor(h.result)}`}>{resultLabel(h.result)}</span>
-                                            <span className="font-bold text-sm text-(--text) capitalize">{h.game_id}</span>
-                                            <span className="font-mono text-[10px] text-(--text-dim)">
-                                                {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(h.played_at))}
-                                            </span>
-                                        </div>
-                                    ))}
+                                    {history.map(h => {
+                                        const isExpanded = expandedHistory === h.id
+                                        const date = new Date(h.played_at)
+                                        return (
+                                            <div key={h.id} className="flex flex-col border-b border-(--border)">
+                                                {/* Row */}
+                                                <button
+                                                    onClick={() => setExpandedHistory(isExpanded ? null : h.id)}
+                                                    className="grid grid-cols-[auto_1fr_auto_auto] gap-4 items-center py-3 text-left hover:bg-(--bg-subtle) transition-colors duration-150 w-full"
+                                                >
+                                                    <span className={`font-mono text-xs font-bold w-6 ${resultColor(h.result)}`}>{resultLabel(h.result)}</span>
+                                                    <span className="font-bold text-sm text-(--text) capitalize">{h.game_id}</span>
+                                                    {h.difficulty && (
+                                                        <span className="font-mono text-[10px] text-(--text-dim) border border-(--border) px-1.5 py-0.5 capitalize">{h.difficulty}</span>
+                                                    )}
+                                                    <span className="font-mono text-[10px] text-(--text-dim)">
+                                                        {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date)}
+                                                    </span>
+                                                </button>
+
+                                                {/* Expanded details */}
+                                                <AnimatePresence>
+                                                    {isExpanded && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: "auto", opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                                                            className="overflow-hidden"
+                                                        >
+                                                            <div className="flex flex-col gap-0 border-t border-(--border) bg-(--bg-subtle)">
+                                                                {[
+                                                                    ["Result", <span className={`font-bold text-sm ${resultColor(h.result)}`}>{resultText(h.result)}</span>],
+                                                                    ["Game", <span className="font-bold text-sm text-(--text) capitalize">{h.game_id}</span>],
+                                                                    ["Difficulty", h.difficulty
+                                                                        ? <span className="font-bold text-sm text-(--text) capitalize">{h.difficulty}</span>
+                                                                        : <span className="font-bold text-sm text-(--text-dim)">—</span>
+                                                                    ],
+                                                                    ["Date", <span className="font-bold text-sm text-(--text)">{new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date)}</span>],
+                                                                    ["Time", <span className="font-bold text-sm text-(--text)">{new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).format(date)}</span>],
+                                                                    ["Match ID", <span className="font-mono text-xs text-(--text-dim) truncate max-w-[180px]">{h.id}</span>],
+                                                                ].map(([label, value]) => (
+                                                                    <div key={label as string} className="flex items-center justify-between px-6 py-3 border-b border-(--border) last:border-b-0">
+                                                                        <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">{label}</span>
+                                                                        {value}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             )}
                         </>
@@ -384,7 +425,7 @@ function UserPage() {
                                                 )}
                                             </div>
                                             <div className="flex flex-col gap-0.5 min-w-0">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 flex-wrap">
                                                     <span className="font-bold text-sm text-(--text)">{a.name}</span>
                                                     {a.game_id && (
                                                         <span className="font-mono text-[10px] text-(--text-dim) border border-(--border) px-1.5 py-0.5 capitalize">{a.game_id}</span>
@@ -408,4 +449,4 @@ function UserPage() {
     )
 }
 
-export default UserPage
+export default UserProfile

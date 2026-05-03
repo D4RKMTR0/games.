@@ -11,7 +11,6 @@ import UserProfile from './pages/UserProfile';
 import GamePage from './pages/GamePage';
 
 
-
 const router = createBrowserRouter([
   {
     path: "/",
