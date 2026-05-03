@@ -11,14 +11,15 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors({
+const corsMiddleware = cors({
     origin: ["http://localhost:5173", "https://games-d4rk.vercel.app"],
     credentials: true,
-}));
+})
 
+app.use(corsMiddleware);
 app.use(express.json());
 
-app.all("/api/auth/*path", toNodeHandler(auth));
+app.all("/api/auth/*path", corsMiddleware, toNodeHandler(auth));
 app.use("/api/stats", statsRouter);
 app.use("/api/user", userRouter);
 
