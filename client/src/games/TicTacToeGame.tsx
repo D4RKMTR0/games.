@@ -132,7 +132,7 @@ async function saveResult(result: "won" | "lost" | "drew", difficulty: string) {
     }
 }
 
-function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) {
+function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
     const aiSide = settings.side === "X" ? "O" : "X"
 
     const [board, setBoard] = useState<string[]>(Array(9).fill(""))

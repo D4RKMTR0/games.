@@ -10,7 +10,7 @@ export interface GameProps {
     settings: GameSettings
     onGameStart: () => void
     onGameEnd: () => void
-    onBack: () => void
+    onBack?: () => void
 }
 
 export type Game = {
