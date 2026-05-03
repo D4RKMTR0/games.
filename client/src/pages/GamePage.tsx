@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Suspense } from "react"
+import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { motion } from "framer-motion"
 import { useParams, useNavigate } from "react-router"
 import { api } from "../lib/api"
@@ -29,6 +29,8 @@ function GamePage() {
     const [playing, setPlaying] = useState(false)
     const [previewHovered, setPreviewHovered] = useState(false)
     const [isGameActive, setIsGameActive] = useState(false)
+
+    const playAreaRef = useRef<HTMLDivElement>(null)
 
     const PreviewComponent = id ? PREVIEW_COMPONENTS[id] : null
     const GameComponent = game?.component
@@ -132,7 +134,10 @@ function GamePage() {
                                     onClick={() => {
                                         if (authLoading) return
                                         if (!isLoggedIn) { setLoginOpen(true); return }
-                                        setPlaying(p => !p)
+                                        setPlaying(p => {
+                                            if (!p) setTimeout(() => playAreaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50)
+                                            return !p
+                                        })
                                     }}
                                     className="bg-(--text) text-(--bg) px-8 py-3 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200"
                                 >
@@ -150,7 +155,7 @@ function GamePage() {
 
                 {/* Play area */}
                 {playing && (
-                    <div className="flex flex-col gap-6 p-8 border-b border-(--border)">
+                    <div ref={playAreaRef} className="flex flex-col gap-6 p-8 border-b border-(--border)">
                         <div className="flex flex-col gap-1">
                             <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Play</span>
                             <div className="flex gap-3 flex-wrap">
@@ -226,13 +231,13 @@ function GamePage() {
                         <span className="font-mono text-xs text-(--text-dim)">No games played yet. Be the first!</span>
                     ) : (
                         <div className="flex flex-col border-t border-(--border)">
-                            <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 py-2 border-b border-(--border) px-1">
+                            <div className="grid grid-cols-[auto_1fr_auto_auto_auto] md:grid-cols-[auto_1fr_auto_auto_auto_auto] gap-2 md:gap-4 py-2 border-b border-(--border) px-1">
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-6">#</span>
                                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Player</span>
-                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">W</span>
-                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">L</span>
-                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">D</span>
-                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-14 text-right">WR%</span>
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-8 md:w-10 text-right">W</span>
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-8 md:w-10 text-right">L</span>
+                                <span className="hidden md:block font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-10 text-right">D</span>
+                                <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim) w-12 md:w-14 text-right">WR%</span>
                             </div>
 
                             {leaderboard.map((entry, i) => {
@@ -241,7 +246,7 @@ function GamePage() {
                                     <div
                                         key={entry.username}
                                         onClick={() => navigate(`/user/${entry.username}`)}
-                                        className={`px-1 grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 items-center py-3 border-b border-(--border) cursor-pointer hover:bg-(--bg-subtle) transition-colors duration-150 ${isTop ? "bg-(--bg-subtle)" : ""}`}
+                                        className={`px-1 grid grid-cols-[auto_1fr_auto_auto_auto] md:grid-cols-[auto_1fr_auto_auto_auto_auto] gap-2 md:gap-4 items-center py-3 border-b border-(--border) cursor-pointer hover:bg-(--bg-subtle) transition-colors duration-150 ${isTop ? "bg-(--bg-subtle)" : ""}`}
                                     >
                                         <span className={`font-mono text-xs w-6 ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
                                             {i + 1}
@@ -257,14 +262,14 @@ function GamePage() {
                                             )}
                                             <div className="flex flex-col min-w-0">
                                                 <span className="font-bold text-sm text-(--text) truncate">{entry.name}</span>
-                                                <span className="font-mono text-[10px] text-(--text-dim)">@{entry.username}</span>
+                                                <span className="font-mono text-[10px] text-(--text-dim) hidden min-[400px]:block">@{entry.username}</span>
                                             </div>
                                         </div>
 
-                                        <span className="font-mono text-sm text-(--green-base) w-10 text-right">{entry.won}</span>
-                                        <span className="font-mono text-sm text-(--red-base) w-10 text-right">{entry.lost}</span>
-                                        <span className="font-mono text-sm text-(--text-muted) w-10 text-right">{entry.drew}</span>
-                                        <span className={`font-mono text-sm w-14 text-right ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
+                                        <span className="font-mono text-sm text-(--green-base) w-8 md:w-10 text-right">{entry.won}</span>
+                                        <span className="font-mono text-sm text-(--red-base) w-8 md:w-10 text-right">{entry.lost}</span>
+                                        <span className="hidden md:block font-mono text-sm text-(--text-muted) w-10 text-right">{entry.drew}</span>
+                                        <span className={`font-mono text-sm w-12 md:w-14 text-right ${isTop ? "text-(--text) font-bold" : "text-(--text-dim)"}`}>
                                             {entry.win_rate}%
                                         </span>
                                     </div>

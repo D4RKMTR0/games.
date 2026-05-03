@@ -145,7 +145,7 @@ router.get("/:username/history", async (req, res) => {
     const userId = userResult.rows[0].id;
 
     const historyResult = await pool.query(
-        `SELECT id, game_id, result, played_at
+        `SELECT id, game_id, result, played_at, difficulty
         FROM history
         WHERE user_id = $1
         ORDER BY played_at DESC`,

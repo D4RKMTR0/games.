@@ -10,6 +10,24 @@ const WINNING_LINES = [
     [0,4,8],[2,4,6],
 ]
 
+const CELL_CENTERS: [number, number][] = [
+    [0.5, 0.5], [1.5, 0.5], [2.5, 0.5],
+    [0.5, 1.5], [1.5, 1.5], [2.5, 1.5],
+    [0.5, 2.5], [1.5, 2.5], [2.5, 2.5],
+]
+
+function extendLine(a: [number, number], b: [number, number], amount = 0.35): [[number, number], [number, number]] {
+    const dx = b[0] - a[0]
+    const dy = b[1] - a[1]
+    const len = Math.sqrt(dx * dx + dy * dy)
+    const ux = dx / len
+    const uy = dy / len
+    return [
+        [a[0] - ux * amount, a[1] - uy * amount],
+        [b[0] + ux * amount, b[1] + uy * amount],
+    ]
+}
+
 function checkWinner(board: string[]) {
     for (const [a, b, c] of WINNING_LINES) {
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
@@ -123,27 +141,27 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
     const [result, setResult] = useState<"won" | "lost" | "drew" | null>(null)
     const [currentTurn, setCurrentTurn] = useState<"X" | "O">("X")
     const [gameStarted, setGameStarted] = useState(settings.mode === "ai" && settings.side === "O")
-    const [winningLine, setWinningLine] = useState<number[] | null>(null)
+    const [winLine, setWinLine] = useState<number[] | null>(null)
 
     const resetGame = (notify = true) => {
         setBoard(Array(9).fill(""))
         setGameOver(false)
         setResult(null)
         setCurrentTurn("X")
+        setWinLine(null)
         setGameStarted(settings.mode === "ai" && settings.side === "O")
         setIsAIThinking(settings.mode === "ai" && settings.side === "O")
-        setWinningLine(null)
         if (notify) onGameEnd()
     }
 
-    // Reset when settings change
     useEffect(() => {
         resetGame(false)
     }, [settings.mode, settings.side, settings.difficulty])
 
-    const handleGameOver = (res: "won" | "lost" | "drew") => {
+    const handleGameOver = (res: "won" | "lost" | "drew", line: number[] | null = null) => {
         setGameOver(true)
         setResult(res)
+        setWinLine(line)
         onGameEnd()
         if (settings.mode === "ai") saveResult(res, settings.difficulty)
     }
@@ -162,8 +180,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
 
         const winner = checkWinner(newBoard)
         if (winner) {
-            setWinningLine(winner.line)
-            handleGameOver(winner.winner === settings.side ? "won" : "lost")
+            handleGameOver(winner.winner === settings.side ? "won" : "lost", winner.line)
             return
         }
 
@@ -179,7 +196,6 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
         }
     }
 
-    // AI move effect
     useEffect(() => {
         if (!isAIThinking || gameOver || settings.mode !== "ai") return
 
@@ -197,8 +213,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
 
             const winner = checkWinner(newBoard)
             if (winner) {
-                setWinningLine(winner.line)
-                handleGameOver(winner.winner === settings.side ? "won" : "lost")
+                handleGameOver(winner.winner === settings.side ? "won" : "lost", winner.line)
             } else if (isDraw(newBoard)) {
                 handleGameOver("drew")
             } else {
@@ -215,6 +230,12 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
         if (r === "won") return settings.side === "X" ? "text-(--red-base)" : "text-(--blue-base)"
         if (r === "lost") return aiSide === "X" ? "text-(--red-base)" : "text-(--blue-base)"
         return "text-(--text)"
+    }
+
+    const winLineColor = () => {
+        if (!winLine) return ""
+        const winner = board[winLine[0]]
+        return winner === "X" ? "var(--red-base)" : "var(--blue-base)"
     }
 
     const localWinColor = currentTurn === "X" ? "text-(--red-base)" : "text-(--blue-base)"
@@ -246,15 +267,11 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
 
             {/* Board */}
             <div className="relative flex items-center justify-center w-full">
-                <div className="grid grid-cols-3 aspect-square w-full max-w-md border-l-3 border-t-3 border-(--border)">
+                <div className="relative grid grid-cols-3 aspect-square w-full max-w-md border-l-3 border-t-3 border-(--border)">
                     {board.map((cell, index) => (
                         <button
                             key={index}
-                            className={`flex justify-center items-center border-r-3 border-b-3 border-(--border) aspect-square cursor-pointer ${
-                                board[index] !== "" || isAIThinking || gameOver ? "pointer-events-none" : ""
-                            } ${
-                                winningLine?.includes(index) ? "bg-(--border)" : ""
-                            }`}
+                            className={`flex justify-center items-center border-r-3 border-b-3 border-(--border) aspect-square cursor-pointer ${board[index] !== "" || isAIThinking || gameOver ? "pointer-events-none" : ""}`}
                             onClick={() => handleClick(index)}
                         >
                             {cell === "O" ? (
@@ -278,6 +295,29 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
                             ) : null}
                         </button>
                     ))}
+
+                    {/* Win line SVG */}
+                    {winLine && (() => {
+                        const [start, end] = extendLine(CELL_CENTERS[winLine[0]], CELL_CENTERS[winLine[2]])
+                        return (
+                            <svg
+                                className="absolute inset-0 w-full h-full pointer-events-none"
+                                viewBox="0 0 3 3"
+                                preserveAspectRatio="none"
+                            >
+                                <motion.line
+                                    x1={start[0]} y1={start[1]}
+                                    x2={end[0]}   y2={end[1]}
+                                    stroke={winLineColor()}
+                                    strokeWidth="0.06"
+                                    strokeLinecap="round"
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                                />
+                            </svg>
+                        )
+                    })()}
                 </div>
 
                 {/* Game over overlay */}
@@ -309,7 +349,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd, onBack }: GameProps) 
                                     Rematch
                                 </button>
                                 <button
-                                    onClick={onBack}
+                                    onClick={() => { setGameOver(false); setResult(null); onGameEnd() }}
                                     className="border border-(--border) text-(--text-muted) px-6 py-2.5 font-mono text-xs tracking-widest uppercase hover:text-(--text) transition-colors duration-200"
                                 >
                                     Back
