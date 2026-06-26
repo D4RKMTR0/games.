@@ -4,6 +4,7 @@ import { games } from "../data/games"
 import { changelog } from "../data/changelog"
 import { motion } from "framer-motion"
 import TicTacToePreview from "../components/previews/TicTacToePreview"
+import ConnectFourPreview from "../components/previews/ConnectFourPreview"
 import { Link } from "react-router"
 
 const isTouchDevice = window.matchMedia("(hover: none)").matches
@@ -147,9 +148,7 @@ function Home() {
                             <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">In Development</span>
                         </div>
                         <div className="flex-1 flex items-center justify-center">
-                            <div className="w-32 h-32 border border-dashed border-(--border) flex items-center justify-center text-[10px] text-(--text-dim) uppercase">
-                                No Preview
-                            </div>
+                            <ConnectFourPreview isHovered={isActive} className="w-32 h-32" />
                         </div>
                         <div className="flex flex-col gap-1">
                             <span className="font-bold text-lg text-(--text-muted)">{inDev?.title ?? "Untitled"}</span>

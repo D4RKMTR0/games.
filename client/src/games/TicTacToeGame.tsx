@@ -128,7 +128,6 @@ async function saveResult(result: "won" | "lost" | "drew", difficulty: string) {
             }),
         ])
     } catch {
-        // silently fail
     }
 }
 
@@ -243,7 +242,6 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
     return (
         <div className="flex flex-col gap-4 items-center w-full">
 
-            {/* Status + restart */}
             <div className="flex items-center justify-between w-full max-w-md">
                 <span className="font-mono text-xs text-(--text-dim)">
                     {gameOver
@@ -265,7 +263,6 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
                 )}
             </div>
 
-            {/* Board */}
             <div className="relative flex items-center justify-center w-full">
                 <div className="relative grid grid-cols-3 aspect-square w-full max-w-md border-l-3 border-t-3 border-(--border)">
                     {board.map((cell, index) => (
@@ -296,7 +293,6 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
                         </button>
                     ))}
 
-                    {/* Win line SVG */}
                     {winLine && (() => {
                         const [start, end] = extendLine(CELL_CENTERS[winLine[0]], CELL_CENTERS[winLine[2]])
                         return (
@@ -320,7 +316,6 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
                     })()}
                 </div>
 
-                {/* Game over overlay */}
                 {gameOver && result && (
                     <div className="absolute inset-0 flex items-center justify-center bg-(--bg)/80 backdrop-blur-sm">
                         <div className="flex flex-col gap-4 border border-(--border) bg-(--bg) p-8 items-center">
