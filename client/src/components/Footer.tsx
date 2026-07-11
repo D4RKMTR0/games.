@@ -31,7 +31,7 @@ function Footer() {
                 <div className="flex flex-col gap-4">
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Links</span>
                     <div className="flex flex-col gap-2">
-                        <a className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors">GitHub</a>
+                        <a href="https://github.com/D4RKMTR0/games" className="font-mono text-xs text-(--text-muted) hover:text-(--text) transition-colors">GitHub</a>
                     </div>
                 </div>
             </div>
