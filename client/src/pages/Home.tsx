@@ -81,7 +81,7 @@ function Home() {
             <section
                 ref={sectionRef}
                 onMouseMove={handleMouseMove}
-                className="grid grid-cols-1 lg:grid-cols-2 min-h-[40dvh] px-[clamp(30px,_4.5%,_100px)] py-24 border-b border-(--border)"
+                className="grid grid-cols-1 lg:grid-cols-2 min-h-[40dvh] px-[clamp(30px,4.5%,100px)] py-24 border-b border-(--border)"
                 style={{
                     backgroundImage: `
                         radial-gradient(circle 500px at ${mouse.x}px ${mouse.y}px, 
@@ -94,16 +94,16 @@ function Home() {
                 <div className="flex items-center justify-center sm:items-start sm:justify-start">
                     <div className="flex flex-col">
                         <span className="text-(--text-dim) font-mono text-xs tracking-widest uppercase mt-5 mb-3 ml-1">A Game Collection</span>
-                        <h1 className="font-bold tracking-tight leading-[0.93] text-[clamp(2.8rem,_7vw,_6rem)] mt-4">
+                        <h1 className="font-bold tracking-tight leading-[0.93] text-[clamp(2.8rem,7vw,6rem)] mt-4">
                             Small games,<br />
                             <span className="text-(--text-dim)">built from</span><br />
                             <span className="text-(--text-dim)">scratch.</span>
                         </h1>
                     </div>
                 </div>
-                <div className="hidden sm:flex items-baseline justify-between lg:flex-col justify-end">
+                <div className="hidden sm:flex items-baseline lg:flex-col justify-end">
                     <div className="flex-1 flex items-center lg: ml-auto">
-                        <p className="font-mono text-sm text-(--text-dim) leading-loose sm:mt-5 lg:text-right lg:mb-[clamp(10px,_2vw,_100px)] xl:mb-[clamp(10px,_4vw,_100px)]">
+                        <p className="font-mono text-sm text-(--text-dim) leading-loose sm:mt-5 lg:text-right lg:mb-[clamp(10px,2vw,100px)] xl:mb-[clamp(10px,4vw,100px)]">
                             Each game is built from zero.<br />
                             Each line written by hand.<br />
                             Nothing borrowed. Nothing generated.
@@ -120,14 +120,14 @@ function Home() {
                 </div>
             </section>
             <section>
-                <div className="flex justify-between items-center pt-15 pb-2 border-b border-(--border) mx-[clamp(20px,_4vw,_1000px)] mb-8">
+                <div className="flex justify-between items-center pt-15 pb-2 border-b border-(--border) mx-[clamp(20px,4vw,1000px)] mb-8">
                     <span className="font-mono text-xs tracking-widest uppercase text-(--text-dim)">Games</span>
                     <Link to="/library" className="font-mono text-xs tracking-widest uppercase text-(--text-dim) flex items-center hover:text-(--text) group transition-colors duration-200 cursor-pointer">More <ArrowRight size={15} strokeWidth={1.5} className="group-hover:translate-x-1 transition-transform duration-200"/></Link>
                 </div>
-                <div className="flex flex-col md:grid grid-cols-[1.5fr_1fr] mx-[clamp(20px,_4vw,_1000px)]">
+                <div className="flex flex-col md:grid grid-cols-[1.5fr_1fr] mx-[clamp(20px,4vw,1000px)]">
                     <Link to={latest?.path ?? "#"}
                         ref={cardRef}
-                        className="flex flex-col justify-between p-8 border border-(--border) min-h-[400px] group cursor-pointer"
+                        className="flex flex-col justify-between p-8 border border-(--border) min-h-100 group cursor-pointer"
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                     >
@@ -143,7 +143,7 @@ function Home() {
                             <span className="font-mono text-xs text-(--text-dim)">{latest?.description ?? "—"}</span>
                         </div>
                     </Link>
-                    <div className="flex flex-col justify-between p-8 min-h-[400px] border-b border-r border-(--border) border-l md:border-l-0 md:border-t">
+                    <div className="flex flex-col justify-between p-8 min-h-100 border-b border-r border-(--border) border-l md:border-l-0 md:border-t">
                         <div className="flex justify-between items-start">
                             <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">In Development</span>
                         </div>
@@ -158,15 +158,15 @@ function Home() {
                 </div>
             </section>
             <section>
-                <div className="flex justify-between items-center pt-15 pb-2 border-b border-(--border) mx-[clamp(20px,_4vw,_1000px)] mb-8">
+                <div className="flex justify-between items-center pt-15 pb-2 border-b border-(--border) mx-[clamp(20px,4vw,1000px)] mb-8">
                     <span className="font-mono text-xs tracking-widest uppercase text-(--text-dim)">Updates</span>
                     <Link to="/log" className="font-mono text-xs tracking-widest uppercase text-(--text-dim) flex items-center hover:text-(--text) group transition-colors duration-200 cursor-pointer">
                         More <ArrowRight size={15} strokeWidth={1.5} className="group-hover:translate-x-1 transition-transform duration-200"/>
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 mx-[clamp(20px,_4vw,_1000px)] border border-(--border)">
+                <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 mx-[clamp(20px,4vw,1000px)] border border-(--border)">
                     {rest[0] ? (
-                        <div className="flex flex-col justify-between p-6 border-b border-(--border) min-h-[160px]">
+                        <div className="flex flex-col justify-between p-6 border-b border-(--border) min-h-40">
                             <div className="flex justify-between items-start">
                                 <span className={`font-mono text-[10px] tracking-widest uppercase ${tagColors[rest[0].tag]}`}>{rest[0].tag}</span>
                                 <span className="font-mono text-[10px] text-(--text-dim)">{rest[0].date}</span>
@@ -179,7 +179,7 @@ function Home() {
                     ) : <div className="border-b border-(--border)" />}
 
                     {latestLog?.path ? (
-                        <Link to={latestLog.path} className="flex flex-col justify-between p-8 border-t md:border-t-0 border-l-0 md:border-l border-(--border) md:row-span-2 md:col-start-2 md:row-start-1 min-h-[320px] group cursor-pointer">
+                        <Link to={latestLog.path} className="flex flex-col justify-between p-8 border-t md:border-t-0 border-l-0 md:border-l border-(--border) md:row-span-2 md:col-start-2 md:row-start-1 min-h-80 group cursor-pointer">
                             <div className="flex justify-between items-start">
                                 <span className={`font-mono text-[10px] tracking-widest uppercase ${tagColors[latestLog.tag]}`}>{latestLog.tag}</span>
                                 <span className="text-(--text-dim) group-hover:text-(--text) group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"><MoveUpRight size={10} /></span>
@@ -191,7 +191,7 @@ function Home() {
                             </div>
                         </Link>
                     ) : (
-                        <div className="flex flex-col justify-between p-8 border-t md:border-t-0 border-l-0 md:border-l border-(--border) md:row-span-2 md:col-start-2 md:row-start-1 min-h-[320px]">
+                        <div className="flex flex-col justify-between p-8 border-t md:border-t-0 border-l-0 md:border-l border-(--border) md:row-span-2 md:col-start-2 md:row-start-1 min-h-80">
                             <div className="flex justify-between items-start">
                                 <span className={`font-mono text-[10px] tracking-widest uppercase ${tagColors[latestLog.tag]}`}>{latestLog.tag}</span>
                             </div>
@@ -203,7 +203,7 @@ function Home() {
                         </div>
                     )}
                     {rest[1] ? (
-                        <div className="flex flex-col justify-between p-6 border-t border-(--border) min-h-[160px]">
+                        <div className="flex flex-col justify-between p-6 border-t border-(--border) min-h-40">
                             <div className="flex justify-between items-start">
                                 <span className={`font-mono text-[10px] tracking-widest uppercase ${tagColors[rest[1].tag]}`}>{rest[1].tag}</span>
                                 <span className="font-mono text-[10px] text-(--text-dim)">{rest[1].date}</span>
