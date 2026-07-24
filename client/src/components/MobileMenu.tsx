@@ -28,7 +28,7 @@ function MobileMenu({ menuIsOn, setMenuIsOn, session, defaultAvatar }: MobileMen
     };
 
     return (
-        <div className={`sm:hidden fixed inset-0 z-[146] bg-(--bg) transition-opacity duration-200 ${menuIsOn ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+        <div className={`sm:hidden fixed inset-0 z-146 bg-(--bg) transition-opacity duration-200 ${menuIsOn ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
             <nav className="flex flex-col justify-center h-full px-10">
                 {[
                     ["01", "Library", "/library", "/ all games"],
@@ -49,7 +49,7 @@ function MobileMenu({ menuIsOn, setMenuIsOn, session, defaultAvatar }: MobileMen
                                 <span className="text-[28px] font-bold tracking-tight text-(--text-muted) group-hover:text-(--text) transition-colors duration-200">
                                     {label}
                                 </span>
-                                <span className="block text-xs font-mono text-(--text-dim) mt-[-10px]">
+                                <span className="block text-xs font-mono text-(--text-dim) -mt-2.5">
                                     {description}
                                 </span>
                             </div>

@@ -14,12 +14,18 @@ const port = process.env.PORT || 3001;
 const corsMiddleware = cors({
     origin: ["http://localhost:5173", "https://games-d4rk.vercel.app"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 })
+
+app.set('trust proxy', 1);
 
 app.use(corsMiddleware);
 app.use(express.json());
 
-app.all("/api/auth/*path", corsMiddleware, toNodeHandler(auth));
+app.options("/api/auth/*splat", corsMiddleware);
+
+app.all("/api/auth/*splat", corsMiddleware, toNodeHandler(auth));
 app.use("/api/stats", statsRouter);
 app.use("/api/user", userRouter);
 

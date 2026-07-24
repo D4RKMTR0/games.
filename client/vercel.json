@@ -1,8 +1,6 @@
 {
   "rewrites": [
-    {
-      "source": "/((?!assets/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/:path*", "destination": "https://games-d4rk-api.xyz/api/:path*" },
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ]
 }
