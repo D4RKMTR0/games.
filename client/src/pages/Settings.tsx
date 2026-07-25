@@ -95,7 +95,7 @@ function Settings() {
             const formData = new FormData()
             formData.append("avatar", file)
 
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/avatar`, {
+            const res = await fetch(`/api/user/avatar`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
