@@ -6,7 +6,7 @@ function Footer() {
     const devGames = games.filter(g => g.status === "in-development")
 
     return (
-        <footer className="border-t border-(--border) mt-16 px-[clamp(20px,_4vw,_1000px)]">
+        <footer className="border-t border-(--border) mt-16 px-[clamp(20px,4vw,1000px)]">
             <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] py-16 gap-12">
                 <div className="flex flex-col gap-4">
                     <span className="font-bold text-2xl text-(--text)">Games.</span>

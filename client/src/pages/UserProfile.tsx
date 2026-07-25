@@ -142,7 +142,7 @@ function UserProfile() {
                 animate={{ clipPath: "inset(0 0% 0 0)" }}
                 exit={{ clipPath: "inset(0 0 0 100%)" }}
                 transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
             >
                 <div className="w-full max-w-4xl mt-10">
                     <span className="font-mono text-xs text-(--text-dim)">Loading...</span>
@@ -158,7 +158,7 @@ function UserProfile() {
                 animate={{ clipPath: "inset(0 0% 0 0)" }}
                 exit={{ clipPath: "inset(0 0 0 100%)" }}
                 transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
             >
                 <div className="w-full max-w-4xl mt-10 border border-(--border) p-8 flex flex-col gap-2">
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">404</span>
@@ -181,7 +181,7 @@ function UserProfile() {
             animate={{ clipPath: "inset(0 0% 0 0)" }}
             exit={{ clipPath: "inset(0 0 0 100%)" }}
             transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
         >
             <div className="w-full max-w-4xl mt-10 mb-10 flex flex-col border border-(--border)">
 
@@ -301,7 +301,7 @@ function UserProfile() {
                                                         <div className="flex flex-col gap-0.5 min-w-0">
                                                             <span className="font-bold text-sm text-(--text) capitalize truncate">{s.game_id}</span>
                                                             <div className="flex items-center gap-2">
-                                                                <div className="w-12 md:w-20 h-[2px] bg-(--border)">
+                                                                <div className="w-12 md:w-20 h-0.5 bg-(--border)">
                                                                     <div className="h-full bg-(--green-base) transition-all duration-500" style={{ width: `${wr}%` }} />
                                                                 </div>
                                                                 <span className="font-mono text-[10px] text-(--text-dim)">{wr}%</span>
@@ -382,7 +382,7 @@ function UserProfile() {
                                                                     ],
                                                                     ["Date", <span className="font-bold text-sm text-(--text)">{new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date)}</span>],
                                                                     ["Time", <span className="font-bold text-sm text-(--text)">{new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).format(date)}</span>],
-                                                                    ["Match ID", <span className="font-mono text-xs text-(--text-dim) truncate max-w-[180px]">{h.id}</span>],
+                                                                    ["Match ID", <span className="font-mono text-xs text-(--text-dim) truncate max-w-45">{h.id}</span>],
                                                                 ].map(([label, value]) => (
                                                                     <div key={label as string} className="flex items-center justify-between px-6 py-3 border-b border-(--border) last:border-b-0">
                                                                         <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">{label}</span>

@@ -10,14 +10,14 @@ function NotFound() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: "linear" }}
-            className="flex items-center justify-center min-h-screen px-[clamp(30px,_4.5%,_100px)] py-24"
+            className="flex items-center justify-center min-h-screen px-[clamp(30px,4.5%,100px)] py-24"
         >
             <span className="blur-sm fixed inset-0 flex flex-col md:flex-row leading-[0.9] md:leading-none items-center justify-center text-[25rem] font-bold text-(--text) opacity-5 select-none pointer-events-none overflow-hidden ">
                 <span>4</span>
                 <span className="text-(--text-muted)">0</span>
                 <span>4</span>
             </span>
-            <div className="grid grid-rows-2 md:grid-cols-2 md:grid-rows-none gap-5 h-fit h-auto">
+            <div className="grid grid-rows-2 md:grid-cols-2 md:grid-rows-none gap-5 h-auto">
                 <div className="flex flex-col justify-center gap-4">
                     <span className="font-mono text-xs tracking-widest uppercase text-(--text-dim)">Error 404</span>
                     <h1 className="font-bold text-3xl text-(--text) leading-tight">This page<br />doesn't exist.</h1>
@@ -39,7 +39,7 @@ function NotFound() {
                                     <span className="text-[24px] font-bold tracking-tight text-(--text-muted) group-hover:text-(--text) transition-colors duration-200">
                                         {label}
                                     </span>
-                                    <span className="ml-0.5 block text-xs font-mono text-(--text-dim) mt-[-10px]">
+                                    <span className="ml-0.5 block text-xs font-mono text-(--text-dim) -mt-2.5">
                                         {description}
                                     </span>
                                 </div>

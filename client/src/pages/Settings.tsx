@@ -162,7 +162,7 @@ function Settings() {
             animate={{ clipPath: "inset(0 0% 0 0)" }}
             exit={{ clipPath: "inset(0 0 0 100%)" }}
             transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
         >
             <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] w-full max-w-4xl h-[80dvh] border border-(--border) mt-10 mb-10">
 

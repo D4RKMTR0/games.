@@ -15,10 +15,25 @@ function Auth() {
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
 
+    const [verificationSent, setVerificationSent] = useState<string | null>(null)
+    const [needsVerification, setNeedsVerification] = useState(false)
+    const [resendLoading, setResendLoading] = useState(false)
+
     const toggleMode = () => {
         const next = mode === "signup" ? "login" : "signup"
         setError(null)
+        setNeedsVerification(false)
         navigate(`/auth/${next}`)
+    }
+
+    const handleResend = async () => {
+        setResendLoading(true)
+        try {
+            await authClient.sendVerificationEmail({ email: verificationSent ?? email })
+        } catch (e) {
+        } finally {
+            setResendLoading(false)
+        }
     }
 
     const handleSubmit = async () => {
@@ -47,13 +62,19 @@ function Auth() {
                     setError("Username is already taken.")
                 } else if (errMsg.includes("Invalid email or password")) {
                     setError("Invalid email or password.")
+                } else if (errMsg.toLowerCase().includes("email not verified") || errMsg.toLowerCase().includes("verify")) {
+                    setNeedsVerification(true)
                 } else {
                     setError(errMsg || "Something went wrong.")
                 }
                 return
             }
 
-            navigate("/")
+            if (mode === "signup") {
+                setVerificationSent(email)
+            } else {
+                navigate("/")
+            }
         } catch (e: any) {
             setError(e.message ?? "Something went wrong")
         } finally {
@@ -65,7 +86,34 @@ function Auth() {
         await authClient.signIn.social({ provider: "google" })
     }
 
-    return (
+    if (verificationSent) {
+        return (
+            <motion.div
+                initial={{ clipPath: "inset(0 100% 0 0)" }}
+                animate={{ clipPath: "inset(0 0% 0 0)" }}
+                exit={{ clipPath: "inset(0 0 0 100%)" }}
+                transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
+                className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4"
+            >
+                <div className="w-full max-w-sm border border-(--border) p-8 flex flex-col gap-4 mt-20 text-center">
+                    <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Almost there</span>
+                    <h1 className="font-bold text-xl text-(--text)">Check your inbox</h1>
+                    <p className="font-mono text-xs text-(--text-dim) leading-relaxed">
+                        We sent a verification link to <span className="text-(--text)">{verificationSent}</span>. Click it to activate your account.
+                    </p>
+                    <button
+                        onClick={handleResend}
+                        disabled={resendLoading}
+                        className="font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200 disabled:opacity-40"
+                    >
+                        {resendLoading ? "Sending..." : "Resend email"}
+                    </button>
+                </div>
+            </motion.div>
+        )
+    }
+
+    return (   
         <motion.div
             initial={{ clipPath: "inset(0 100% 0 0)" }}
             animate={{ clipPath: "inset(0 0% 0 0)" }}
@@ -149,6 +197,21 @@ function Auth() {
                     <span className="font-mono text-xs text-(--red-base)">{error}</span>
                 )}
 
+                {needsVerification && (
+                    <div className="flex flex-col gap-2">
+                        <span className="font-mono text-xs text-(--red-base)">
+                            Please verify your email before logging in.
+                        </span>
+                        <button
+                            onClick={handleResend}
+                            disabled={resendLoading}
+                            className="w-fit font-mono text-[10px] tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200"
+                        >
+                            {resendLoading ? "Sending..." : "Resend verification email"}
+                        </button>
+                    </div>
+                )}
+
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
@@ -167,6 +230,15 @@ function Auth() {
                     </button>
                 </span>
 
+                {mode === "login" && (
+                    <button
+                        type="button"
+                        onClick={() => navigate("/auth/forgot-password")}
+                        className="self-center font-mono text-[10px] tracking-widest uppercase text-(--text-dim) hover:text-(--text) transition-colors duration-200"
+                    >
+                        Forgot password?
+                    </button>
+                )}
             </div>
         </motion.div>
     )

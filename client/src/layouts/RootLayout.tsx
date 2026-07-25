@@ -6,7 +6,7 @@ import { useTheme } from "../hooks/useTheme";
 import LoginModal from "../components/ui/LoginModal";
 import { useState } from "react";
 
-const noFooterRoutes = ["/auth/login", "/auth/signup", "/user/settings"]
+const noFooterRoutes = ["/auth/login", "/auth/signup", "/auth/forgot-password", "/auth/reset-password", "/user/settings"]
 
 function RootLayout() {
     const location = useLocation()
@@ -20,7 +20,7 @@ function RootLayout() {
             <ScrollToTop />
             <div className="flex flex-col min-h-screen">
                 <Nav />
-                <main className="flex-grow">
+                <main className="grow">
                     <Outlet context={{ setLoginOpen }} />
                 </main>
                 {showFooter && <Footer />}

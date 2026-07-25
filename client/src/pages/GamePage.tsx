@@ -77,7 +77,7 @@ function GamePage() {
                 animate={{ clipPath: "inset(0 0% 0 0)" }}
                 exit={{ clipPath: "inset(0 0 0 100%)" }}
                 transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+                className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
             >
                 <div className="w-full max-w-4xl mt-10 border border-(--border) p-8 flex flex-col gap-2">
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">404</span>
@@ -98,7 +98,7 @@ function GamePage() {
             animate={{ clipPath: "inset(0 0% 0 0)" }}
             exit={{ clipPath: "inset(0 0 0 100%)" }}
             transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
-            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,_4vw,_100px)]"
+            className="flex justify-center items-start mt-15 min-h-[calc(100vh-4rem)] px-[clamp(20px,4vw,100px)]"
         >
             <div className="w-full max-w-4xl mt-10 mb-10 flex flex-col border border-(--border)">
 

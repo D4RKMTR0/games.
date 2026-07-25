@@ -9,6 +9,8 @@ import Auth from './pages/Auth';
 import Settings from './pages/Settings';
 import UserProfile from './pages/UserProfile';
 import GamePage from './pages/GamePage';
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 
 const router = createBrowserRouter([
@@ -43,6 +45,14 @@ const router = createBrowserRouter([
       {
         path: "auth/login",
         element: <Auth />
+      },
+      {
+        path: "auth/forgot-password",
+        element: <ForgotPassword />
+      },
+      {
+        path: "auth/reset-password",
+        element: <ResetPassword />
       },
       {
         path: "user/settings",

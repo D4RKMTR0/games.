@@ -33,7 +33,7 @@ function About() {
                 ))}
             </div>
 
-            <div className="flex md:hidden flex-col gap-6 px-[clamp(30px,_4.5%,_100px)] pt-24">
+            <div className="flex md:hidden flex-col gap-6 px-[clamp(30px,4.5%,100px)] pt-24">
                 {questions.map(({ q, content }) => (
                     <div key={q} className="flex flex-col gap-1 border-b border-(--border) pb-6">
                         <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">{q}</span>
