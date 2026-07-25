@@ -51,7 +51,7 @@ function Settings() {
         if (section === "stats") {
             setStatsLoading(true)
             api.get("/api/stats")
-                .then(data => setStats(data ?? []))
+                .then(data => setStats(Array.isArray(data) ? data : []))
                 .catch(() => setStats([]))
                 .finally(() => setStatsLoading(false))
         }
@@ -143,11 +143,11 @@ function Settings() {
         }
     };
 
-    const totalGames = stats.reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
-    const totalWins = stats.reduce((acc, s) => acc + s.won, 0)
+    const totalGames = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
+    const totalWins = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.won, 0)
     const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0
-    const favoriteGame = stats.length > 0
-        ? stats.reduce((a, b) => (a.won + a.lost + a.drew) > (b.won + b.lost + b.drew) ? a : b).game_id
+    const favoriteGame = (Array.isArray(stats) ? stats : []).length > 0
+        ? (Array.isArray(stats) ? stats : []).reduce((a, b) => (a.won + a.lost + a.drew) > (b.won + b.lost + b.drew) ? a : b).game_id
         : null
 
     const sections: { id: Section, label: string, description: string }[] = [

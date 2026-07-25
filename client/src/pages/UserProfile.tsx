@@ -97,13 +97,13 @@ function UserProfile() {
         }
     }, [tab, username, profile])
 
-    const totalGames = stats.reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
-    const totalWins = stats.reduce((acc, s) => acc + s.won, 0)
-    const totalLosses = stats.reduce((acc, s) => acc + s.lost, 0)
-    const totalDraws = stats.reduce((acc, s) => acc + s.drew, 0)
+    const totalGames = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.won + s.lost + s.drew, 0)
+    const totalWins = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.won, 0)
+    const totalLosses = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.lost, 0)
+    const totalDraws = (Array.isArray(stats) ? stats : []).reduce((acc, s) => acc + s.drew, 0)
     const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0
-    const favoriteGame = stats.length > 0
-        ? stats.reduce((a, b) => (a.won + a.lost + a.drew) > (b.won + b.lost + b.drew) ? a : b).game_id
+    const favoriteGame = (Array.isArray(stats) ? stats : []).length > 0
+        ? (Array.isArray(stats) ? stats : []).reduce((a, b) => (a.won + a.lost + a.drew) > (b.won + b.lost + b.drew) ? a : b).game_id
         : null
 
     const joinedDate = profile?.createdAt
