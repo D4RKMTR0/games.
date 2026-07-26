@@ -220,7 +220,7 @@ function Auth() {
                 <button
                     onClick={handleResend}
                     disabled={resendLoading}
-                    className="font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200 disabled:opacity-40"
+                    className="w-full bg-(--text) text-(--bg) py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40"
                 >
                     {resendLoading ? "Sending..." : resendDone ? "Sent again ✓" : "Resend email"}
                 </button>
@@ -236,9 +236,9 @@ function Auth() {
                 <button
                     onClick={handleResend}
                     disabled={resendLoading}
-                    className="font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200 disabled:opacity-40"
+                    className="w-full bg-(--text) text-(--bg) py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40"
                 >
-                    {resendLoading ? "Sending..." : resendDone ? "Sent again ✓" : "Resend verification email"}
+                    {resendLoading ? "Sending..." : resendDone ? "Sent again" : "Resend verification email"}
                 </button>
                 <button
                     onClick={() => setNeedsVerification(false)}
