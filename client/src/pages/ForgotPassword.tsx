@@ -1,13 +1,21 @@
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { authClient } from "../lib/auth-client"
-import { Link } from "react-router"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { authClient } from "../lib/auth-client";
+import { Link, useNavigate } from "react-router";
 
 function ForgotPassword() {
     const [email, setEmail] = useState("")
     const [loading, setLoading] = useState(false)
     const [sent, setSent] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
+    const { data: session, isPending } = authClient.useSession()
+
+    useEffect(() => {
+        if (!isPending && session?.user) {
+            navigate("/")
+        }
+    }, [isPending, session, navigate])
 
     const handleRequestReset = async () => {
         setLoading(true)
@@ -38,7 +46,7 @@ function ForgotPassword() {
                     <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Check your inbox</span>
                     <h1 className="font-bold text-xl text-(--text)">Reset link sent</h1>
                     <p className="font-mono text-xs text-(--text-dim) leading-relaxed">
-                        If an account exists for <span className="text-(--text)">{email}</span>, a reset link is on its way.
+                        If an account exists for <span className="text-(--text)">{email}</span>, a reset link is on its way. Please check your inbox and spam.
                     </p>
                     <Link to="/" className="w-full bg-(--text) text-(--bg) mt-2 py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40">
                         Back Home

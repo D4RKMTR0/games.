@@ -11,6 +11,7 @@ import UserProfile from './pages/UserProfile';
 import GamePage from './pages/GamePage';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Verified from './pages/Verified';
 
 
 const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "auth/login",
         element: <Auth />
+      },
+      {
+        path: "auth/verified",
+        element: <Verified />
       },
       {
         path: "auth/forgot-password",

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useNavigate, useLocation } from "react-router"
 import { authClient } from "../lib/auth-client"
@@ -6,6 +6,7 @@ import { authClient } from "../lib/auth-client"
 function ResetPassword() {
     const navigate = useNavigate()
     const location = useLocation()
+    const { data: session, isPending } = authClient.useSession()
 
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -13,13 +14,21 @@ function ResetPassword() {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    const token = new URLSearchParams(location.search).get("token")
+    const params = new URLSearchParams(location.search)
+    const token = params.get("token")
+    const linkError = params.get("error")
+
+    useEffect(() => {
+        if (!isPending && session?.user) {
+            navigate("/")
+        }
+    }, [isPending, session, navigate])
 
     const handleReset = async () => {
         setError(null)
 
-        if (!token) {
-            setError("This reset link is invalid or missing a token.")
+        if (!token || linkError) {
+            setError("This reset link is invalid or has expired.")
             return
         }
 
@@ -54,7 +63,15 @@ function ResetPassword() {
         }
     }
 
-    if (!token) {
+    if (isPending) {
+        return (
+            <motion.div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
+                <span className="font-mono text-xs text-(--text-dim)">Loading...</span>
+            </motion.div>
+        )
+    }
+
+    if (!token || linkError) {
         return (
             <motion.div
                 initial={{ clipPath: "inset(0 100% 0 0)" }}
@@ -71,7 +88,7 @@ function ResetPassword() {
                     </p>
                     <button
                         onClick={() => navigate("/auth/forgot-password")}
-                        className="font-mono text-xs tracking-widest uppercase text-(--text-muted) hover:text-(--text) transition-colors duration-200"
+                        className="w-full bg-(--text) text-(--bg) py-2.5 font-mono text-xs tracking-widest uppercase hover:opacity-80 transition-opacity duration-200 disabled:opacity-40"
                     >
                         Request new link
                     </button>
