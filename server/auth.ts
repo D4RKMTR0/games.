@@ -27,7 +27,7 @@ export const auth = betterAuth({
         requireEmailVerification: true,
         sendResetPassword: async ({ user, url }) => {
             await resend.emails.send({
-            from: "noreply@send.games-d4rk-api.xyz",
+            from: "noreply@games-d4rk-api.xyz",
             to: user.email,
             subject: "Reset your password",
             html: `
@@ -62,7 +62,7 @@ export const auth = betterAuth({
     emailVerification: {
         sendVerificationEmail: async ({ user, url }) => {
             await resend.emails.send({
-                from: "noreply@send.games-d4rk-api.xyz",
+                from: "noreply@games-d4rk-api.xyz",
                 to: user.email,
                 subject: "Verify your email",
                 html: `
