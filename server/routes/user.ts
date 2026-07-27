@@ -53,6 +53,7 @@ router.post("/avatar", requireAuth, upload.single("avatar"), async (req, res) =>
     const blob = await put(`avatars/${userId}.webp`, compressed, {
         access: "public",
         contentType: "image/webp",
+        allowOverwrite: true,
     })
 
     await pool.query(
