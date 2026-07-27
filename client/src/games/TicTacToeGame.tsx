@@ -278,7 +278,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                     className="w-full h-full flex items-center justify-center"
                                 >
-                                    <Circle className="w-full h-full p-[clamp(8px,_3vw,_20px)] text-(--blue-base)" strokeWidth={1.5} />
+                                    <Circle className="w-full h-full p-[clamp(8px,3vw,20px)] text-(--blue-base)" strokeWidth={1.5} />
                                 </motion.div>
                             ) : cell === "X" ? (
                                 <motion.div
@@ -287,7 +287,7 @@ function TicTacToeGame({ settings, onGameStart, onGameEnd }: GameProps) {
                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                     className="w-full h-full flex items-center justify-center"
                                 >
-                                    <X className="w-full h-full p-[clamp(8px,_3vw,_20px)] text-(--red-base)" strokeWidth={1.5} />
+                                    <X className="w-full h-full p-[clamp(8px,3vw,20px)] text-(--red-base)" strokeWidth={1.5} />
                                 </motion.div>
                             ) : null}
                         </button>

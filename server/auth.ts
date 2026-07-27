@@ -91,7 +91,11 @@ export const auth = betterAuth({
                 </div>
                 `,
             });
+            
         },
+        sendOnSignUp: true,
+        sendOnSignIn: true,
+        autoSignInAfterVerification: true,
     },
 
     socialProviders: {

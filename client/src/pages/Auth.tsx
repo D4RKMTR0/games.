@@ -38,6 +38,7 @@ function Auth() {
             })
             setResendDone(true)
         } catch (e) {
+            console.error("Resend failed:", e)
         } finally {
             setResendLoading(false)
         }
@@ -210,7 +211,6 @@ function Auth() {
                 </div>
             </motion.div>
 
-            {/* Signup success — check your inbox */}
             <Modal open={!!verificationSent} onClose={() => {}}>
                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--text-dim)">Almost there</span>
                 <h1 className="font-bold text-xl text-(--text)">Check your inbox</h1>
@@ -226,7 +226,6 @@ function Auth() {
                 </button>
             </Modal>
 
-            {/* Login blocked — email not verified */}
             <Modal open={needsVerification} onClose={() => setNeedsVerification(false)}>
                 <span className="font-mono text-[10px] tracking-widest uppercase text-(--red-base)">Not verified</span>
                 <h1 className="font-bold text-xl text-(--text)">Please verify your email</h1>

@@ -208,7 +208,7 @@ function Settings() {
                                     <div className="absolute inset-0 rounded-full bg-(--bg)/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                         <span className="font-mono text-[9px] tracking-widest uppercase text-(--text)">
                                             {avatarLoading ? "..." : "Change"}
-                                        </span>
+                                        </span>x
                                     </div>
                                 </button>
                                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />

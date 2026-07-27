@@ -35,7 +35,7 @@ function SearchBar({searchTerm, setSearchTerm}: SearchBarProps) {
     }, [charIndex, isDeleting, phraseIndex, searchPlaceholders]);
 
     return (
-        <div className="flex items-center font-mono rounded-sm transition-colors duration-200 border border-(--border) hover:border-(--text-muted) w-[clamp(110px,_35vw,_200px)]">
+        <div className="flex items-center font-mono rounded-sm transition-colors duration-200 border border-(--border) hover:border-(--text-muted) w-[clamp(110px,35vw,200px)]">
             <input
                 type="text"
                 value={searchTerm}

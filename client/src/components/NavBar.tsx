@@ -39,12 +39,12 @@ function Nav() {
 
     return (
         <>
-            <header className={`h-[60px] fixed w-full z-[145] flex items-center transition-all duration-200 border-b justify-between ${isScrolled ? "bg-(--bg)/40 border-(--border) backdrop-blur-sm" : "border-(--bg) bg-(--bg)"}`}>
-                <Link to="/" className="flex items-baseline font-mono pl-[clamp(30px,_4.5%,_100px)] gap-1.5 text-[13px]">
+            <header className={`h-15 fixed w-full z-145 flex items-center transition-all duration-200 border-b justify-between ${isScrolled ? "bg-(--bg)/40 border-(--border) backdrop-blur-sm" : "border-(--bg) bg-(--bg)"}`}>
+                <Link to="/" className="flex items-baseline font-mono pl-[clamp(30px,4.5%,100px)] gap-1.5 text-[13px]">
                     <span className="font-semibold">Games.</span>
                     <span className="text-(--text-muted)">/ by d4rk</span>
                 </Link>
-                <nav className="hidden sm:flex items-center gap-6 text-[13px] pr-[clamp(30px,_4.5%,_100px)] text-(--text-muted) font-mono">
+                <nav className="hidden sm:flex items-center gap-6 text-[13px] pr-[clamp(30px,4.5%,100px)] text-(--text-muted) font-mono">
                     <Link to="/library" className="transition-colors duration-200 hover:text-(--text)">
                         Library
                     </Link>
@@ -123,7 +123,7 @@ function Nav() {
                 </nav>
             </header>
 
-            <button className="sm:hidden fixed z-[147] top-[8px] right-0 mr-[calc(clamp(30px,_4.5vw,_100px)_-_12px)] flex flex-col justify-center items-center gap-[5px] w-11 h-11 group" onClick={() => setMenuIsOn(!menuIsOn)}>
+            <button className="sm:hidden fixed z-147 top-2 right-0 mr-[calc(clamp(30px,4.5vw,100px)-12px)] flex flex-col justify-center items-center gap-1.25 w-11 h-11 group" onClick={() => setMenuIsOn(!menuIsOn)}>
                 <span className={`block w-5 h-[1.5px] bg-(--text-muted) group-hover:bg-(--text) rounded-full origin-center transition-all duration-300 ${menuIsOn ? "w-7 rotate-45 translate-y-[6.9px]" : ""}`} />
                 <span className={`block w-5 h-[1.5px] bg-(--text-muted) group-hover:bg-(--text) rounded-full transition-all duration-300 ${menuIsOn ? "opacity-0 scale-x-0" : ""}`} />
                 <span className={`block w-5 h-[1.5px] bg-(--text-muted) group-hover:bg-(--text) rounded-full origin-center transition-all duration-300 ${menuIsOn ? "w-7 -rotate-45 -translate-y-[6.9px]" : ""}`} />
