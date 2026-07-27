@@ -56,7 +56,7 @@ function Auth() {
                     username,
                     callbackURL: "/auth/verified",
                 } as any)
-                : await authClient.signIn.email({ email, password })
+                : await authClient.signIn.email({ email, password, callbackURL: "/auth/verified" })
 
             if (result.error) {
                 const errMsg = result.error.message || ""
